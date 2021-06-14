@@ -1,20 +1,26 @@
 \documentclass{iiththesis}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+% \usepackage[table,xcdraw]{xcolor}
 \book{Thesis}
-\title{--Title of my thesis--}
-\degree{Doctor of Philosophy}
+\title{Applying Machine Learning to Compiler and Programs}
+\degree{Master of Technology}
 \department{Computer Science and Engineering}
 \submitted{\today}
-\author{-- Student Name --}
-\adviser{--------------}
+\author{Rohit Aggarwal}
+\adviser{Dr. Ramakrishna Upadrasta}
 \addradviser{Dept. of Computer Science and Engineering \\ IITH}
-%\chair{---------}
-%\addrchair{Dept. of Mech Eng \\ IITH}
-%\external{----------}
-%\addrexternal{Dept. of Chem Eng \\ IITM}
-%\internal{----------}
-%\addrinternal{Dept. Math \\ IITH}
-%\coguide{----------}
-%\addrcoguide{Dept. of Chem Eng \\ IITH}
+\chair{Dr. Rogers Mathew}
+\addrchair{Dept. of Computer Science and Engineering \\ IITH}
+% \external{----------}
+% \addrexternal{Dept. of Chem Eng \\ IITM}
+\external{Dr. Saurabh Joshi}
+\addrexternal{Dept. of Computer Science and Engineering \\ IITH}
+\internal{Dr. Sathya Peri}
+\addrinternal{Dept. of Computer Science and Engineering \\ IITH}
+% \coguide{----------}
+% \addrcoguide{Dept. of Chem Eng \\ IITH}
 
 
 \input{acknowledgments/acks}
@@ -22,12 +28,15 @@
 \input{abstract/abstract}
 
 \renewcommand{\bibname}{References}
+% \newcommand{\irtovec}{{\textsc{IR2Vec}}\xspace}
 \begin{document}
 
-\input{intro-chapter/introduction}
-\input{chapter-1/chapter-1}
-\input{chapter-2/chapter-2}
-\input{conclusion-chapter/conclusion}
+\input{1_introduction}
+\input{2_tc}
+\input{3_AlgoReg}
+\input{4_Distributution}
+\input{5_MLRA}
+\input{6_conclusion}
 
 \clearpage
 \newpage

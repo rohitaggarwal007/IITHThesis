@@ -294,7 +294,8 @@ I declare that this written submission represents my ideas in my own words, and 
   \fi
   }
     
-  
+% \newcommand{\irtovec}{{\textsc{IR2Vec}}\xspace}
+
 \newcommand*{\makeabstract}{
   \newpage
   \addcontentsline{toc}{section}{Abstract}
