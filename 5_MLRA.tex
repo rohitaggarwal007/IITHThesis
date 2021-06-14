@@ -1,4 +1,179 @@
 \chapter{Machine Learning Framework for Register Allocation}
 \label{chap:ch5}
 
-Conclude your thesis.
+\section{Background}
+Register Allocation is an old and classic optimization problem. Many researchers provide many solutions for it but all are heuristically defined. In a heuristical problem, it depends upon the developer’s domain expertise. There would be a possibility that some important heuristics are missed and may lead to suboptimal performance.
+
+The allocation should be done efficiently as the number of the registers is limited in number and may lead to poor performance if the register does not give to a memory-bound variable. This leads to an increase in the use of the memory-based load and store operation and these are more expensive than the register operations. 
+
+The popular register allocations are greedy, basic, fast, and PBQP register allocation. In this we are interested in the register allocation via Interference graph coloring. In the fig[1], there is a sample code for which we have the live interval interference chart. The Live interval are the scope of the variable when the variable was first defined and last used. Every variable has it own live interval and those may interfere with others. We can formulate this problem as the graph color program where the node is the variable or live interval and edges are the inference among the nodes. The rule for the thumb, no two adjacent nodes be assigned the same color(register). The optimal graph coloring is a classic NP-Hard problem. 
+
+The LLVM has Greedy and Basic allocators based on the graph coloring. There are four strategies used by these allocators respectively namely Splitting, Coalescing, eviction, and spilling. 
+
+\paragraph{Splitting} - In this a selected node or live of the graph is divided into two sub-live intervals depending upon the point of the splitting. The newly created live interval may or not form the edge between the existing nodes.
+
+\paragraph{Coalescing} - In these two nodes which have the same variable value can be combined to form one node or live interval. 
+\paragraph{Eviction} - if some node of the graphs is already assigned a colored, but we wanted to uncolor the respective node. This process is known as eviction.
+\paragraph{Spilling} - If the allocator ran out of register or heuristically suggests assigning the variable to the memory. Memory load-store are costlier operations.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/mlra_strategies.png}
+    \caption{Register Allocation - Strategies}
+     \label{fig:mlra-strat}
+\end{figure}
+
+The \textit{greedy allocator} uses all the four strategies in a heuristic manner and \textit{Basic allocator} uses splitting and spilling.
+
+The current allocators are heuristically defined and provide sub-optimal solutions. Machine learning could help to better solutions.
+
+\section{Previous Work}
+The register allocation using deep learning [D.Das at el 2020]. In this, they tried to use the Bi-LSTM based deep learning model to predict the color or register to allocated. The graph as input to a model of max size 100 nodes and node has hidden representation as a bit vector of size 100. The bit index is set to one when the node interference with the respective node in the graph. 
+
+But there were several drawbacks to their work. The solution was not integrated back to the LLVM pipeline. The proper modeling of the interference rule was not done due to which predict adjacent nodes are assigned the same color and lead to incorrect register assignments. They have added a correction phase to overcome this problem. The dataset used for the training was not realistic as it was sampled from random graphs using the nauty api[].
+
+\section{Introduction}
+We have developed a Machine learning framework for register allocation. We have divided the framework into 3 components- Capture Interference graph, ML model interface, Code generation, and multi-architecture support. The communication between the Capture interference graph, ML model, and code generation is done via GPRC.
+
+The GRPC is a medium for cross-platform communication between C++ (LLVM) and Python (ML Model)
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/mlra_components.png}
+    \caption{Components of correct ML based register allocation}
+     \label{fig:mlra-components}
+\end{figure}
+
+\section{Framework Components}
+\subsection{Capture Interference Graph}
+We have written a pass in LLVM which is responsible for capturing the inference graphs for the given input files. We annotate the graph with more information which would be later used by the other components.
+
+The node comprises of Node label, information regarding type of register physical or virtual, Color and register Id if physical register, the class of the register, and embedding representation.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/mlra_cig.png}
+    \caption{Capture interference graphs}
+     \label{fig:mlra-cig}
+\end{figure}
+
+The edge or interference that we are considering are between Virtual register and virtual register and between virtual register and virtual register. There are some physical register which are already in used and can’t be used and to respect the interference rule, the edge is added. The Virtual -- virtual is the base edge.
+\subsection{ML Model interface}
+
+\subsubsection{Training}
+From the previous component, we got the interference graphs and pass to the training paradigm. The interference graph goes to the model in th python where it request to start the server to the LLVM through the GPRC. After the server got started, the ML model run and share its prediction with the codegen through another GRPC call and codegen sends some information back to the model for further execution. 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/mlra_training.png}
+    \caption{Train the model using the GRPC}
+     \label{fig:mlra-training}
+\end{figure}
+
+After all the interference graphs are visited, training is finished and the trained model used for the inference.
+\subsection{Code generation or inference}
+After the model is trained, we have added the integrated model with LLVM so that code generation could be done using the prediction suggested by the configured trained model.
+
+While inference,the input file is given the LLVM and in the pipeline,  capture interference graph pass is invoke and the graph is then send to the Python through GRPC where it is feed to the trained model. The trained model send a color prediction json to the LLVM. In LLVM, the predicted colors/registers are mapped to the virtual registers and code is generated. 
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/mlra_inference.png}
+    \caption{Code generation using the trained model}
+     \label{fig:mlra-inference}
+\end{figure}
+\section{Architecture}
+Different backends have their own instruction set and register set. In LLVM, this information is managed by TD files. TableGen takes the TD files and applies them to the backend so that this information is available at the code generation.
+
+The TD files consist of information regarding different types of registers, classes information to which the register belongs, aliasing information, sub-registers details, and many more.
+We have implemented a pass that captures information from the TD files and generates the configuration files which are used in different components. In the pass, we can configure the classes of the registers which we want to support, mapping between the color and the registers and overlapping information of the subregisters. 
+
+These configuration files are used in the capture interference graph component to get the register id, color, register classes and other information. In the ML model inference, overlapping information, register color mapping configuration is used. Similarly in the code generation, color register mapping is used to get the color corresponding to the register.
+
+\section{Correctness Results}
+To check the correctness of work framework, we have chosen GCC Torture benchmark. It is also part of llvm-testsuite. GCC Torture is a stress testing benchmark. For the experimentation, we have selected 1483 input files. We have selected two architectures X86 and AArch64 and successfully generated the code followed by successful execution.
+
+For AArch64, we used QEMU to run the generated code on X86 machine. QEMU is a simulator or virtualization software that provide the libraries needed by assembly code of different architecture and executing on others.
+
+% Please add the following required packages to your document preamble:
+
+\ref{tab:correction} 
+
+\begin{table}[h]
+\begin{tabular}{llllll}
+\hline
+\textbf{Architecture} & \textbf{\begin{tabular}[c]{@{}l@{}}Program \\ files\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Base \\ compilable files\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Assembly\\ files generated\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Binary \\ files generated\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Successful \\ execution\end{tabular}} \\ \hline
+\textbf{X86} & 1483 & 1483 & 1483 & 1483 & 1483 \\ \hline
+\textbf{\begin{tabular}[c]{@{}l@{}}AArch64\\ (QEMU)\end{tabular}} & 1483 & 1479 & 1479 & 1479 & 1479 \\ \hline
+\end{tabular}
+\centering
+\label{tab:correction}
+\end{table}
+
+The errors undertaken will evaluating the framework are code generation error, linking error, runtime error, and semantic errors. A lot of iteration went into fixing these errors. We were able to achieve zero errors.
+
+\begin{table}[h]
+\begin{tabular}{lllll}
+\hline
+\textbf{Architecture} & \textbf{\begin{tabular}[c]{@{}l@{}}Code \\ generation error\end{tabular}} & \textbf{Linking error} & \textbf{\begin{tabular}[c]{@{}l@{}}Runtime\\ error\end{tabular}} & \textbf{Semantic error} \\ \hline
+\textbf{X86} & 0 & 0 & 0 & 0 \\ \hline
+\textbf{AArch64} & 0 & 0 & 0 & 0 \\ \hline
+\end{tabular}
+\centering
+\end{table}
+
+\section{MLRA in Action}
+Here we want to show how the framework can be used to register prediction using a naive reinforcement learning model on X86 architecture. We have taken 50K interference graphs from the SPEC 2017 benchmarks. Embedding are generated using the IR2Vec on machine instructions representation(MIR). We are using reinforcement learning as the ML model interface and the objective of the model is to minimize the spill cost.
+
+The spill cost is the weight associated with each variable. Higher the value of spill cost more costly is load-store memory operations.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.45]{figures/chapter-5/mlra_action.png}
+    \caption{Framework configurations}
+     \label{fig:mlra-fw}
+\end{figure}
+
+\subsection{Reinforcement Learning Model}
+Implemented a policy using the DQN algorithm in that the agent predicts which node should be assigned the register first.  While assigning the register, the policy is constraint by the interference rule. The objective of the model is to minimize the spillcost.
+
+\subsection{Results}
+
+Run the inference with trained model and showed our results on PolyBench and MiBench.
+\subsubsection{PolyBench}
+It is a Loop benchmarks which have different computational intensive programs.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/polybench.png}
+    \caption{PolyBench - Runtime}
+     \label{fig:mlra-polybench}
+\end{figure}
+
+
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+ & \textbf{Greedy} & \textbf{Greedy ML} & \textbf{Basic} & \textbf{Basic ML} \\ \hline
+GeoMean & \multicolumn{1}{r|}{9.306} & \multicolumn{1}{r|}{9.050} & \multicolumn{1}{r|}{9.259} & \multicolumn{1}{r|}{8.891} \\ \hline
+\end{tabular}
+\centering
+\end{table}
+
+\subsubsection{MiBench}
+This Benchmark is a micro-kernel benchmarks which are suitable for embedded device.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-5/MiBench.png}
+    \caption{Runtime - MiBench}
+     \label{fig:mlra-mibench}
+\end{figure}
+
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+ & \textbf{Greedy} & \textbf{Greedy ML} & \textbf{Basic} & \textbf{Basic ML} \\ \hline
+GeoMean & \multicolumn{1}{r|}{0.0227} & \multicolumn{1}{r|}{0.0220} & \multicolumn{1}{r|}{0.0242} & \multicolumn{1}{r|}{0.0237} \\ \hline
+\end{tabular}
+\centering
+\end{table}

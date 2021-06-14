@@ -34,6 +34,27 @@ xz\_r & 67 & 85 \\ \hline
 \centering
 \end{table}
 
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[h]
+\begin{tabular}{lll}
+\multirow{2}{*}{\textbf{BENCHMARK}} & \multicolumn{2}{c}{\textbf{Runtime}} \\
+ & \textbf{O3(s)} & \textbf{O3-inline-Enabled(s)} \\
+blender\_r & 298 & 311 \\
+deepsjeng\_r & 343 & 336 \\
+imagick\_r & 440 & 437 \\
+lbm\_r & 544 & 545 \\
+leela\_r & 503 & 498 \\
+mcf\_r & 542 & 530 \\
+namd\_r & 234 & 239 \\
+omnetpp\_r & 636 & 602 \\
+povray\_r & 459 & 439 \\
+x264\_r & 422 & 284 \\
+xalancbmk\_r & 407 & 392 \\
+xz\_r & 303 & 442
+\end{tabular}
+\centering
+\end{table}
 
 \section{Model}
  The generated graphs are used as inputs in our modeling pipeline. In this section, we explain how we represent SDGs using IR2Vec representations and the way we model the reinforcement learning model to consume this information using Gated Graph Neural Networks. We also discuss various parameters of the model, including the design of our cost model, with which we arrive at a relative number of clock ticks that take into account impact by both locality and vectorization.
