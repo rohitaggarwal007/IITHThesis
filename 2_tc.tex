@@ -1,14 +1,15 @@
-\chapter{Applying IR2Vec to thread coarsening}
+\chapter{Applying IR2Vec to Thread Coarsening}
 \label{chap:ch2}
 
 
 \section{Introduction to IR2Vec}
 % \subsection{Overview}
-The overview of the proposed methodology is shown in Fig.~\ref{fig:IR2Vec-Overview}. Instructions in IR can be represented as an Entity-Relationship Graph, with the instruction entities as nodes, and the relation between the entities as edges. A translational learning model that we discussed in Sec.~\ref{subsec:rep-learning} is used to learn these relations (Sec.~\ref{subsec:preprocessing}). The output of this learning is a dictionary containing the embeddings of the entities and is called \textit{Seed embedding vocabulary}. 
+\vk{Should say what is IR2Vec here}
+The overview of the proposed methodology is shown in Fig.~\ref{fig:IR2Vec-Overview}. Instructions in IR can be represented as an Entity-Relationship Graph, with the instruction entities as nodes, and the relation between the entities as edges. A translational learning model is used to learn these relations. The output of this learning is a dictionary containing the embeddings of the entities and is called \textit{Seed embedding vocabulary}. 
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.5]{figures/flow.pdf}
+    \includegraphics[scale=0.5]{figures/chapter-2/flow.pdf}
     \caption{Overview of IR2Vec infrastructure}
      \label{fig:IR2Vec-Overview}
 \end{figure}
@@ -17,18 +18,18 @@ The above dictionary is looked up to form the embeddings at various levels of th
 At the coarsest level, instruction embeddings are obtained just by using the \textit{Seed embedding vocabulary}. We call such encodings as \textit{Symbolic} encodings.
 We use the \textit{Use-Def} and \textit{Reaching definition}~\cite{Hecht:1977:FAC:540175, muchnick1997advanced} information to form the instruction vector for \textit{Flow-Aware} encodings. 
 
-The instructions which are \textit{live} are used to form the \textit{Basic block Vector}. This process of formation of a basic block vector using the flow analysis information is explained in Sec.~\ref{subsec:DFinfo-prop}. The vector to represent a function is obtained by using the basic block vectors of the function. The \textit{Code vector} is obtained by propagating the vectors obtained at the function level with the \texttt{call graph} information, as explained in Sec.~\ref{subsec:CFInfo-prop}.
+The instructions which are \textit{live} are used to form the \textit{Basic block Vector}  using the flow analysis information. The vector to represent a function is obtained by using the basic block vectors of the function. The \textit{Code vector} is obtained by propagating the vectors obtained at the function level with the \texttt{call graph} information.
 \section{Thread Coarsening Task}
 Thread coarsening~\cite{Volkov-Demmel-10.5555/1413370.1413402} is the process of increasing the work done by a single thread by fusing two or more concurrent threads. Thread coarsening factor corresponds to the number of threads that can be fused together. Selection of an optimal thread coarsening factor can lead to significant improvements~\cite{Magni-SC13-DBLP:conf/sc/MagniDO13} in the speedups on GPU devices and a naive coarsening would lead to a substantial slowdown.
 
 A thread coarsening factor of a kernel that gives the best speedup on a GPU could give the worst performance with the same coarsening factor on another device (either within or across vendors) because of the architectural characteristics of the device~\cite{magni2014automatic, Stawinoga-10.1145/3194242}. For example, \texttt{nbody} kernel, which has a higher degree of Instruction Level Parallelism, can be better exploited by VLIW based AMD Radeon than SIMD based AMD Tahiti~\cite{magni2014automatic}.
 
-\subsubsection*{Dataset} 
+\subsection{Dataset} 
 In this experiment, we follow the experimental setup proposed by Magni et al.~\cite{magni2014automatic} to predict the optimal thread coarsening factor---among $\{1,2,4,8,16,32\}$---for a given kernel specific to a GPU device. Even for this experiment, we use the dataset provided by Ben-Nun et al.~\cite{ncc}. It consists of about 68 datapoints from 17 OpenCL kernels on 4 different GPUs -- AMD Radeon 5900, AMD Tahiti 7970, NVIDIA GTX 480 and NVIDIA Tesla K20c.
 These kernels are collectively taken from AMD SDK, NVIDIA SDK and Parboil benchmarks.
 A datapoint consists of the kernel and its runtime corresponding to each thread coarsening factor on a particular GPU device.
 
-\subsubsection*{Experimental Setup}
+\subsection{Experimental Setup}
 Even for this task, we use gradient boosting classifier instead of LSTMs and RNNs to predict the coarsening factor for the four GPU targets. For this experiment, we set the learning rate as 0.05 with 140 decision stumps with 1 level, as the number of data points in the dataset is very low. We use ten-fold cross-validation for measuring the performance.
 
 \begin{table}[h]
@@ -49,7 +50,7 @@ Even for this task, we use gradient boosting classifier instead of LSTMs and RNN
 \end{table}
 \footnotetext{As per the results given in the NCC paper~\cite{ncc}, inst2vec-imm achieves a (arithmetic) mean of $ 1.28\times$, $ 1.18\times$, $ 1.11\times$ and $1\times$ speedup on AMD Radeon, AMD Tahiti, NVIDIA GTX and NVIDIA Tesla; whereas our \textit{Flow-Aware} encodings achieve a (arithmetic) mean of $ 1.25\times$, $ 1.3\times$, $ 1.26\times$ and $ 1.16\times$ respectively.}
 
-\textit{Speedups.}
+\subsubsection{Speedups}
 In Fig.~\ref{fig:tcSpeedup}, we show the speedups achieved by our encodings and earlier works on four different platforms -- AMD Radeon HD 5900, AMD Tahiti 7970, NVIDIA GTX 480 and NVIDIA Tesla K20c. 
 
 On AMD Radeon, both of our encodings achieve a speedup of $ 1.2\times$ when compared to the state-of-the-art speedup of $ 1.15\times$ and $ 1.14\times$ achieved by inst2vec~\cite{ncc} and DeepTune model with transfer learning (DeepTune-TL)~\cite{cummins2017end2end}.
@@ -124,7 +125,7 @@ We get a speedup of $ 1.13\times$ with both of our proposed encodings on NVIDIA 
 
 On average, it can be seen that both encodings outperform the earlier methods for prediction of the thread coarsening factor on all the four platforms under consideration. 
 
-\textit{Slowdown.}  Magni et al.~\cite{magni2014automatic} observe that \texttt{spmv} and \texttt{mvCoal} kernels have irregular dependences that causes a poor response to coarsening, and hence no performance improvement for them is possible.
+\subsubsection{Slowdown}  Magni et al.~\cite{magni2014automatic} observe that \texttt{spmv} and \texttt{mvCoal} kernels have irregular dependences that causes a poor response to coarsening, and hence no performance improvement for them is possible.
 For these kernels, IR2Vec obtains the baseline speedup \textit{without} resulting in a slowdown. In contrast, the earlier models result in negative speedups (Deeptune results in a slowdown upto $0.36$ $\times$ in AMD Radeon and inst2vec results in a slowdown of upto $0.63$ $\times$ in AMD Radeon and NVIDIA GTX). 
 The same argument applies for \texttt{stencil} kernel (an iterative Jacobi stencil on 3D-grid), where the coarsening leads to slowdown (except in NVIDIA GTX), while IR2Vec still obtain the baseline speedup.
 
@@ -133,6 +134,10 @@ It can be observed that the \textit{Flow-Aware} encodings \textit{rarely lead to
 Whereas, predictions by inst2vec and DeepTune-TL result in a slowdown in 18 and 21 cases.
 We believe that this is because of the flow information associated with the obtained vectors.
 
-\paragraph{Thread Coarsening}
-Even for the thread coarsening task, our model takes lesser time of $\approx$10 seconds for training when compared to $\approx$11 hours of training time needed by DeepTune-TL and $\approx$1 hour of training time needed (and 77K and 69K parameters used) by DeepTune and NCC approaches. 
+\paragraph{Training}
+Our model takes lesser time of $\approx$10 seconds for training when compared to $\approx$11 hours of training time needed by DeepTune-TL and $\approx$1 hour of training time needed (and 77K and 69K parameters used) by DeepTune and NCC approaches. 
 This results in $\approx 360\times$--$3960\times$ reduction of training time, and again, achieving good speedups. 
+
+
+\section{Conclusion}\label{sec:tc:conclusion}
+We are able to achieve better results with respect to the prior work in term of both accuracy. Additionaly, the training time of the model is far better then the others.

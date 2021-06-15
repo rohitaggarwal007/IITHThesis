@@ -28,7 +28,7 @@
 
 \usepackage[toc,page]{appendix}
 
-\import{}{refs.tex}
+\import{}{templates/refs.tex}
 \colorlet{ubcolor}{teal}
 \newcommand{\ubcomment}[1]{\textcolor{ubcolor}{UB:#1}}
 \newcommand{\Omit}[1]{}
@@ -39,7 +39,6 @@
 \newcommand{\fixme}[2][]{\textcolor{red}{\textbf{FIXME:}\ifthenelse{\isempty{#1}{}}{}{#1--}#2}}
 \newcommand\redsout{\bgroup\markoverwith{\textcolor{orange}{\rule[0.5ex]{2pt}{1pt}}}\ULon}
 \newcommand{\suggest}[2]{\redsout{#2}\textcolor{orange}{\textit{#1}}}
-
 
 %  Zapf Chancer character
 \DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}

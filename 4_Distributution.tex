@@ -1,23 +1,44 @@
 \chapter{Distribution And Fusion Case Study}
 \label{chap:ch4}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.45]{figures/chapter-4/distribution_introduction.png}
+    \caption{Distributed Loops}
+     \label{fig:dist-introduction}
+\end{figure}
+
 \section{Background}
     The optimization in the compiler is very important of code generation.
-Good the optimization, better is the code execution. Here, we will talk about Loop Distribution optimization.
+Good is the optimization, better is the code execution. Here, we will talk about Loop Distribution optimization.
 
-    In Loop Distribution, the bigger loop is split into smaller ones. It may lead to improved loop vectorization and better locality. In LLVM the loop distribution is not efficient is heuristic-based and does not promise the optimal distribution. We are presenting the ML-based Loop Distribution.
+    In Loop Distribution, the bigger loop is split into smaller loops as shown in Fig.~\ref{fig:dist-introduction}. It may lead to improved loop vectorization and better locality. In LLVM, the loop distribution is not efficient, heuristic-based and does not promise the optimal distribution. It lead to miss in the vectorization opportunities.
+
+\section{Introduction}
+We want to have a ML based Loop Distribution optimization in the LLVM. It could overcome the flaws of the existing Loop Distribution. But in this chapter, we will discuss about Frontier Pass and it's importance.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.4]{figures/chapter-4/distribution_flow.png}
+    \caption{Position of Frontier Pass in the workflow}
+     \label{fig:dist-flow}
+\end{figure}
+
+\section{Frontier Pass}\label{sec:distribution:fp}
+ We have proposed a pass sequence of custom inlining followed by fusion. See the Fig.~\ref{fig:dist-flow}. We have written loop-function-inline pass, which pass through loop and try to forcefully inline the function inside the innermost loop as well as at the same level of the loop. After performing loop-function inlining, we have enable the fusion pass in the pipeline. The loop fusion is the reverse of loop distribution. The fusion combined multiple loop to form a big loop. 
+ 
+%  The selected loop should not have any control flow  and call instruction inside it.
 
 
-\section{Motivation}
-To achieve the optimal distribution, we first want to have max distribution. We have an ideology that max fusion can lead to max distribution. We have to perform fusion in the pipeline to have better distribution and indeed may lead to better vectorization. To see that whether there are fusion opportunities present in the flow or not. We have also written an inline enabling pass for the functions in the innermost loop. We run experimentation on the SPEC 2017 benchmarks to observe the fusion candidate.
-
-
+%  For the Bigger picture to happen, we have a design proposal that only innermost loop will be selected.
+\section{Ideology Behind Frontier Pass}
+To achieve the optimal distribution, we first want to have max distribution. The max distribution can be achieve from max fusion. As per the sec~\ref{sec:distribution:fp}, we have added fusion to the pipeline. For better fusion opportunities, some custom inlining can be helpful. We have developed loop-function-inline as mentioned in Sec.~\ref{sec:distribution:fp} and schedule it in the LLVM pass sequence. 
 
 \begin{table}[h]
 \begin{tabular}{|l|l|l|}
 \hline
 \multirow{2}{*}{\textbf{BENCHMARK}} & \multicolumn{2}{c|}{\textbf{\#Candidates for Loop Fusion}} \\ \cline{2-3} 
- & \textbf{O3} & \textbf{O3-inline-Enabled} \\ \hline
+ & \textbf{O3-Fusion} & \textbf{O3-Frontier Pass} \\ \hline
 blender\_r & 3952 & 7042 \\ \hline
 deepsjeng\_r & 94 & 244 \\ \hline
 imagick\_r & 2735 & 3065 \\ \hline
@@ -32,28 +53,44 @@ xalancbmk\_r & 1017 & 1147 \\ \hline
 xz\_r & 67 & 85 \\ \hline
 \end{tabular}
 \centering
+\caption{Candidates for Loop Fusion}
+\label{tab:dist:fuscand}
 \end{table}
+
+\section{Case Study}
+In this section, we will see the effect of the frontier pass on the fusion candidates and runtime. We have run our xperimentation on the SPEC 2017 benchmark and  observe the fusion candidate. Here, we are comparing the metrics between the O3 optimization with fusion enabled and O3 optimization with Frontier Pass.
+
+\subsection{Fusion Candidate}
+Here, we are comparing the \# Candidates for Loop Fusion between the O3 optimization with fusion enabled and O3 optimization with Frontier Pass. See the Tab.~\ref{tab:dist:fuscand}. Incase of Frontier Pass, there are more fusion candidates which are better for max fusion. Hence frontier pass is important part of the ML-based loop distribution as the prepossessing step. 
+
+\subsection{Runtime}
+Here, we are comparing the runtime between the O3 optimization with fusion enabled and O3 optimization with Frontier Pass. See the Tab.~\ref{tab:dist:fpruntime}. Due to Frontier Pass,  they is not much overhead added to the runtime and they are some positive cases where there is improvement in runtime.
+
+
 
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
 \begin{table}[h]
-\begin{tabular}{lll}
-\multirow{2}{*}{\textbf{BENCHMARK}} & \multicolumn{2}{c}{\textbf{Runtime}} \\
- & \textbf{O3(s)} & \textbf{O3-inline-Enabled(s)} \\
-blender\_r & 298 & 311 \\
-deepsjeng\_r & 343 & 336 \\
-imagick\_r & 440 & 437 \\
-lbm\_r & 544 & 545 \\
-leela\_r & 503 & 498 \\
-mcf\_r & 542 & 530 \\
-namd\_r & 234 & 239 \\
-omnetpp\_r & 636 & 602 \\
-povray\_r & 459 & 439 \\
-x264\_r & 422 & 284 \\
-xalancbmk\_r & 407 & 392 \\
-xz\_r & 303 & 442
+\begin{tabular}{|l|l|l|}
+\hline
+\multirow{2}{*}{\textbf{BENCHMARK}} & \multicolumn{2}{c|}{\textbf{Runtime in seconds}} \\ \cline{2-3} 
+ & \textbf{O3-Fusion} & \textbf{O3-Frontier Pass} \\ \hline
+blender\_r & 298 & 311 \\ \hline
+deepsjeng\_r & 343 & 336 \\ \hline
+imagick\_r & 440 & 437 \\ \hline
+lbm\_r & 544 & 545 \\ \hline
+leela\_r & 503 & 498 \\ \hline
+mcf\_r & 542 & 530 \\ \hline
+namd\_r & 234 & 239 \\ \hline
+omnetpp\_r & 636 & 602 \\ \hline
+povray\_r & 459 & 439 \\ \hline
+x264\_r & 422 & 284 \\ \hline
+xalancbmk\_r & 407 & 392 \\ \hline
+xz\_r & 303 & 442 \\ \hline
 \end{tabular}
 \centering
+\caption{Runtime Overhead}
+\label{tab:dist:fpruntime}
 \end{table}
 
 \section{Model}
