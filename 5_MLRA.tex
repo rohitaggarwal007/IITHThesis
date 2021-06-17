@@ -1,8 +1,28 @@
-\chapter{Machine Learning Framework for Register Allocation}
+\chapter{A Machine Learning Framework for Register Allocation}
 \label{chap:ch5}
 
-\section{Background}
-Register Allocation is an old and classic optimization problem. Many researchers provide many solutions for it but all are heuristically defined. In a heuristical problem, it depends upon the developer’s domain expertise. There would be a possibility that some important heuristics are missed and may lead to suboptimal performance.
+In this chapter XXX XXX FIXME In section XXX
+
+\ra{Starting}
+
+In the chapter, we will talk about MLRA - Machine Leaning Framework for Register Allocation. The main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be on infrastructure.
+
+\begin{itemize}
+    
+    \item In section \ref{sec:mlra:intro}, an introduction to Framework and its objectives
+    
+    \item In section \ref{sec:mlra:sup}, a brief overview supervised learning for Algorithm Recognition, dataset used, Model Architecture and results
+    
+    \item In section \ref{sec:mlra:unsup}, a brief overview unsupervised learning for Algorithm Recognition, dataset used, Model Architecture and results  
+    
+    \item  In section~\ref{sec:mlra:conclusion}, we will conclude this chapter.
+
+\end{itemize}
+
+\ra{ending}
+
+\section{Background}\label{sec:mlra:bg}
+Register Allocation is an old and classic optimization problem. Many researchers provided many solutions for it, some exact solutions, but many heuristics as well. The success of a heuristic  depends upon the domain expertise of its developer. There is always a possibility that some important heuristics are missed, leading to sub-optimal performance.
 
 The allocation should be done efficiently as the number of the registers is limited in number and may lead to poor performance if the register does not give to a memory-bound variable. This leads to an increase in the use of the memory-based load and store operation and these are more expensive than the register operations. 
 
@@ -14,7 +34,7 @@ The popular register allocations are greedy, basic, fast, and pbqp register allo
     \caption{Register Allocation as Interference graph coloring}
      \label{fig:mlra-coloring}
 \end{figure}
-The LLVM has Greedy and Basic allocators based on the graph coloring. There are four strategies used by these allocators respectively namely Splitting, Coalescing, eviction, and spilling (fig~\ref{fig:mlra-strat}). 
+The LLVM has Greedy allocator  based on the graph coloring. There are four strategies used by this allocator respectively namely splitting, coalescing, eviction, and spilling (fig~\ref{fig:mlra-strat}). 
 
 \paragraph{Splitting} - In this a selected node or live of the graph is divided into two sub-live intervals depending upon the point of the splitting. The newly created live interval may or not form the edge between the existing nodes.
 
@@ -34,15 +54,14 @@ The \textit{greedy allocator} uses all the four strategies in a heuristic manner
 
 The current allocators are heuristically defined and provide sub-optimal solutions. Machine learning could help to better solutions.
 
-\section{Introduction}
+\section{Introduction}\label{sec:mlra:intro}
 We have developed a Machine learning framework for register allocation. It main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be the infrastructure.
 
 Here we discuss the orientation of this chapter. In section \ref{sec:mlra:components}, we have explained about different components of the framework like  Capture Interference graph, ML model interface and Code generation. In section\ref{sec:mlra:arch}, Support for multiple architecture. In section \ref{sec:mlra:correct}, the correction results are presented. In section \ref{sec:mlra:mlra_action}, run the framework with actual Model and pen done the results.
 
-
-\section{Previous Work}
+\section{Previous Work}\label{sec:mlra:pre_work}
 \vk{More details before drawbacks}
-The register allocation using deep learning \cite{dlra:LLVMHPC_2020}. In this, they tried to use the Bi-LSTM based deep learning model to predict the color or register to allocated. The graph as input to a model of max size 100 nodes and node has hidden representation as a bit vector of size 100. The bit index is set to one when the node interference with the respective node in the graph. 
+In previous work~\cite{dlra:LLVMHPC_2020}, they tried to use the LSTM based deep learning model to predict the color or register to allocated. The graph as input to a model of max size 100 nodes and node has hidden representation as a bit vector of size 100. The bit index is set to one when the node interference with the respective node in the graph. 
 
 But there were several drawbacks to their work. The solution was not integrated back to the LLVM pipeline. The proper modeling of the interference rule was not done due to which predict adjacent nodes are assigned the same color and lead to incorrect register assignments. They have added a correction phase to overcome this problem. The dataset used for the training was not realistic as it was sampled from random graphs using the graph based C library.
 
@@ -91,7 +110,6 @@ While inference,the input file is given the LLVM and in the pipeline,  capture i
     \caption{Code generation using the trained model}
      \label{fig:mlra-inference}
 \end{figure}
-
 
 \section{Architecture}\label{sec:mlra:arch}
 Different backends have their own instruction set and register set. In LLVM, this information is managed by TD files. TableGen takes the TD files and applies them to the backend so that this information is available at the code generation.
@@ -175,7 +193,7 @@ GeoMean & \multicolumn{1}{r|}{9.306} & \multicolumn{1}{r|}{9.050} & \multicolumn
 \end{table}
 
 \subsubsection{MiBench}
-This Benchmark is a micro-kernel benchmarks which are suitable for embedded device.  See the Fig.~\ref{fig:mlra-mibench} and Tab.~\ref{tab:mlra:mibench} for the performance comparison
+This Benchmark is a micro-kernel benchmarks which are suitable for embedded devices.  See the Fig.~\ref{fig:mlra-mibench} and Tab.~\ref{tab:mlra:mibench} for the performance comparison
 
 \begin{figure}[t]
     \centering
@@ -196,9 +214,8 @@ GeoMean & \multicolumn{1}{r|}{0.0227} & \multicolumn{1}{r|}{0.0220} & \multicolu
 \end{table}
 
 % Conclusion Section
-\vk{Conclusion}
 
 \section{Conclusion}\label{sec:mlra:conclusion}
-We have successfully developed a framework for register allocation in which semantically correct code generation took place, multiple architecture supported and proper communication between LLVM(C++) and ML model(Python).
+We have successfully developed a framework for register allocation which generates semantically correct code, which supports multiple architectures, and which can communicate between LLVM (in C++) and ML model (in Python).
 
-This framework can be scaled to support the other optimization problems in which such kind of information to-fro is required.
+This framework can also be used to support the ML based optimizations in LLVM for other optimization problems, in which such kind of information to-from is required.

@@ -1,7 +1,23 @@
 \chapter{Algorithm Recognition}
 \label{chap:ch3}
 
-\section{Introduction}
+In this chapter XXX XXX FIXME In section XXX
+\ra{Starting}
+In the chapter, we will discuss about Algorithm Recognition in supervised and unsupervised learning using IR2Vec.
+\begin{itemize}
+    
+    \item In section \ref{sec:algo:intro}, an introduction to Algorithm Recognition, previous work and our proposal
+    
+    \item In section \ref{sec:algo:sup}, a brief overview supervised learning for Algorithm Recognition, dataset used, Model Architecture and results
+    
+    \item In section \ref{sec:algo:unsup}, a brief overview unsupervised learning for Algorithm Recognition, dataset used, Model Architecture and results  
+    
+    \item  In section~\ref{sec:algo:conclusion}, we will conclude this chapter.
+
+\end{itemize}
+\ra{ending}
+
+\section{Introduction}\label{sec:algo:intro}
 Algorithm recognition is a problem in which we want to get the similar algorithm with similar semantics. In the programming language to prove that two programs are same or not is a undecidable problem and that cannot be solved deterministically. The benefits of algorithm recognition could be better maintenance of the codes, tagging the similar programs, code suggestion. etc.   A tool can be derive form this solution and can ease the problem faced by the software developer in the daily routine. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
 
 % Classifying programs based on the problem statement or detecting if two programs solve the same purpose is undecidable as there is no algorithm exist to emulate this on a Turing Machine. With that said, it cannot be solved on a modern computer. However, it is rather important -- classification of programs based on functionality helps in better maintainance of codes, helps in better code suggestion, etc. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
@@ -11,13 +27,13 @@ However, most of these approaches~\cite{Peng:2015,tbcnn-aaai16,Chen:2019} are tr
 
 In this work, we have used the IR2Vec to get the program representations. We have applying this representation in supervised as well as unsupervised setting and discuss in upcoming sections about the work done respectively.
 
-\section{Supervised Learning}
+\section{Supervised Learning}\label{sec:algo:sup}
 Supervised Learning is the field of machine learning in which the model is trained against known label or tags. The model for a given data point can't predict any thing not mentioned in the vocabulary. There are some fixit numbers of label for a machine learning task.
-\vk{Add more here..}
+% \vk{Add more here..}
 
 % \subsection{Background}
 In case of the image classification, there is a image dataset and each image is labeled. We run the training using the given images as the input and predict the image label. Given the true value and predicted value, we calculate the loss which is used to update gradient.
-\vk{Related work}
+% \vk{Related work}
 
 % \subsection{Methodology}
 On a similar note, we try to classify programs so as to recognize algorithms. Here, given a program, the objective is to classify it to one of the known classes that it would belong. fig~\ref{fig:supervised-background}
@@ -124,9 +140,8 @@ As mentioned above have 300 dimension vector and it reduce it's dimension to 2 d
 \end{itemize}
 
 % Unsupervised Learning started
-\section{Unsupervised Learning}
 
-
+\section{Unsupervised Learning}\label{sec:algo:unsup}
 \subsection{Background}
 Unsupervised learning is the machine learning technique that is used to train the model without labels. The clustering algorithm like KNN, K-means, hierarchical clustering, and others. 
 	Learning used to happen based upon minimizing the intra-cluster distance and maximizing the inter-cluster distances. Similar data points stay near a similar point and far from the non-similar ones. This can be used for the inference of the unseen classes.
@@ -146,7 +161,7 @@ Unsupervised learning is the machine learning technique that is used to train th
 	    It is a type of unsupervised learning, in which the training phase has two sets i.e support set and a Query set. The training happens in task. Each task consist of N classes and K datapoint in the support set and N classes in the support set. Each task has a mutually exclusive set i.e. all the N classes are not part of another task.(fig~\ref{fig:unsupervised-fewshot})
 % 	Training
 
-    A task is given to the model and support set is passed to the model. Now to see how much the model learns after first task, we run it on the query set for which we knew the label. The datapoint belonging to same class should lie near to each other. In the example fig[], Cat in the query set of task 1 should lie near the cat cluster of the support set and respectively for other classes.
+    A task is given to the model and support set is passed to the model. Now to see how much the model learns after first task, we run it on the query set for which we knew the label. The datapoint belonging to same class should lie near to each other. In the example as per Fig.\ref{fig:unsupervised-background}, there is a cat class in the support set and query set of task1. On training, the datapoint of cat class from query set should try to lie near the cat cluster of the support set. The other datapoints in the query set should also have same behaviour.
 	
 	The Loss function is formulated in terms of the distance metric. If the query set is far apart during training then more is the loss and that needs to backpropagate for the better learning of the next task or batch.
 
@@ -177,7 +192,7 @@ c_{k} = \frac{1}{|S_{k}|}  \sum_{(x_{i},y_{i}) \epsilon S_{k}}  f_{ \phi }(x_{i}
 \end{equation}
 
 \subsubsection{Loss Function}\label{sec:algo:proto:loss}
-During the training phase, datapoint from form each class of the Query set to evaluated against the respective prototype. The loss function forms the probability distribution of a prototype($c_{k}$) given a point \textbf{x} . Using the square euclidean metric to calculate the distance between them. Less is the distance, higher  is the probability of the point x that it belongs to the respective prototype. Loss function is negative log-probability of $p_{\phi}$ from Eq.~\ref{eq:2}\vk{Equation}
+During the training phase, datapoint from form each class of the Query set to evaluated against the respective prototype. The loss function forms the probability distribution of a prototype($c_{k}$) given a point \textbf{x} . Using the square euclidean metric to calculate the distance between them. Less is the distance, higher  is the probability of the point x that it belongs to the respective prototype. Loss function is negative log-probability of $p_{\phi}$ from Eq.~\ref{eq:2} %\vk{Equation}
 
 \begin{equation}\label{eq:2}
 p_{ \phi }(y = k | x) =  \frac{exp(-d(f_{\phi}(x), c_{k}))}{\sum_{k^{'} }exp(-d(f_{\phi}(x), c_{k^{'}}))} 
@@ -209,3 +224,7 @@ Test Accuracy \% & 78.47 & 89.66 & 80.9 & 91.27 \\
 \end{table}
 
 \vk{Conclusion}
+
+\ra{Starting}
+\section{Conclusion}\label{sec:algo:conclusion}
+\ra{ending}

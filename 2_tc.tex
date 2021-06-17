@@ -1,11 +1,28 @@
 \chapter{Applying IR2Vec to Thread Coarsening}
 \label{chap:ch2}
 
+In this chapter XXX XXX FIXME In section XXX
+\ra{Starting}
+In the chapter, we will talk Thread Coarsening task and application of IR2Vec to the task.
+\begin{itemize}
+    
+    \item In \textit{section \ref{sec:tc:introir2vec}}, a brief introduction and overview of IR2Vec 
+    
+    \item In \textit{section \ref{sec:tc:task}}, introduction to Thread Coarsening, dataset used,  experimentation setup and results  
+    
+    \item  In \textit{section~\ref{sec:tc:conclusion}}, we will conclude this chapter.
 
-\section{Introduction to IR2Vec}
+\end{itemize}
+\ra{ending}
+
+
+\section{Introduction to IR2Vec}\label{sec:tc:introir2vec}
 % \subsection{Overview}
-\vk{Should say what is IR2Vec here}
-The overview of the proposed methodology is shown in Fig.~\ref{fig:IR2Vec-Overview}. Instructions in IR can be represented as an Entity-Relationship Graph, with the instruction entities as nodes, and the relation between the entities as edges. A translational learning model is used to learn these relations. The output of this learning is a dictionary containing the embeddings of the entities and is called \textit{Seed embedding vocabulary}. 
+% \vk{Should say what is IR2Vec here}
+IR2Vec~\cite{IR2Vec}, a Concise and Scalable encoding infrastructure to represent programs as a distributed embedding in continuous space. This distributed embedding is obtained by combining representation learning methods with flow information to capture the syntax as well as the semantics of the input programs. As our infrastructure is based on the Intermediate Representation (IR) of the source code, obtained embeddings are both language and machine independent. The entities of the IR are modeled as relationships, and their
+representations are learned to form a seed embedding vocabulary. This infrastructure support two incremental encodings: Symbolic and Flow-Aware. Symbolic encodings are obtained from the seed embedding vocabulary, and Flow-Aware encodings are obtained by augmenting the Symbolic encodings with the flow information.
+
+The overview of IR2Vec methodology is shown in Fig.~\ref{fig:IR2Vec-Overview}. Instructions in IR can be represented as an Entity-Relationship Graph, with the instruction entities as nodes, and the relation between the entities as edges. A translational learning model is used to learn these relations. The output of this learning is a dictionary containing the embeddings of the entities and is called \textit{Seed embedding vocabulary}. 
 
 \begin{figure}[t]
     \centering
@@ -19,7 +36,8 @@ At the coarsest level, instruction embeddings are obtained just by using the \te
 We use the \textit{Use-Def} and \textit{Reaching definition}~\cite{Hecht:1977:FAC:540175, muchnick1997advanced} information to form the instruction vector for \textit{Flow-Aware} encodings. 
 
 The instructions which are \textit{live} are used to form the \textit{Basic block Vector}  using the flow analysis information. The vector to represent a function is obtained by using the basic block vectors of the function. The \textit{Code vector} is obtained by propagating the vectors obtained at the function level with the \texttt{call graph} information.
-\section{Thread Coarsening Task}
+
+\section{Thread Coarsening Task}\label{sec:tc:task}
 Thread coarsening~\cite{Volkov-Demmel-10.5555/1413370.1413402} is the process of increasing the work done by a single thread by fusing two or more concurrent threads. Thread coarsening factor corresponds to the number of threads that can be fused together. Selection of an optimal thread coarsening factor can lead to significant improvements~\cite{Magni-SC13-DBLP:conf/sc/MagniDO13} in the speedups on GPU devices and a naive coarsening would lead to a substantial slowdown.
 
 A thread coarsening factor of a kernel that gives the best speedup on a GPU could give the worst performance with the same coarsening factor on another device (either within or across vendors) because of the architectural characteristics of the device~\cite{magni2014automatic, Stawinoga-10.1145/3194242}. For example, \texttt{nbody} kernel, which has a higher degree of Instruction Level Parallelism, can be better exploited by VLIW based AMD Radeon than SIMD based AMD Tahiti~\cite{magni2014automatic}.
@@ -55,48 +73,6 @@ In Fig.~\ref{fig:tcSpeedup}, we show the speedups achieved by our encodings and 
 
 On AMD Radeon, both of our encodings achieve a speedup of $ 1.2\times$ when compared to the state-of-the-art speedup of $ 1.15\times$ and $ 1.14\times$ achieved by inst2vec~\cite{ncc} and DeepTune model with transfer learning (DeepTune-TL)~\cite{cummins2017end2end}.
 In AMD Tahiti, \textit{Flow-Aware} encodings achieve a speedup of $ 1.23\times$; \textit{Symbolic} encoding achieves a speedup of $ 1.2\times$, whereas the earlier works by DeepTune-TL and inst2vec achieve a speedup of $ 0.9\times$ and $ 1.04\times$ respectively. In Tab.~\ref{tab:predictionSpeedup-tc}, we show the percentage improvement of speedup obtained by \textit{Flow-Aware} encodings over other methodologies. From the table, we can infer that \textit{Flow-Aware} gives better results for every architecture when compared to the other methods. 
-
-% \begin{figure}
-%     \centering
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.55, width=\textwidth]{figures/TC/radeon.pdf}
-%     \end{tabular}
-%     % \vspace{-5cm}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.55, width=\textwidth]{figures/TC/tahiti.pdf}
-%     \end{tabular}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.55, width=\textwidth]{figures/TC/gtx.pdf}
-%     \end{tabular}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.55, width=\textwidth]{figures/TC/tesla.pdf}
-%     \end{tabular}
-%     \caption{Plot showing the speedups achieved by predicted coarsening factors by various methods}
-%     % \vspace*{-\baselineskip}
-%     \label{fig:tcSpeedup}
-%      \vspace*{-0.4cm}
-% \end{figure}
-
-% \begin{figure}
-%     \centering
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.8, width=\textwidth]{figures/TC/new/radeon1-crop.pdf}
-%     \end{tabular}
-%     % \vspace{-5cm}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.8, width=\textwidth]{figures/TC/new/tahiti2-crop.pdf}
-%     \end{tabular}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.8, width=\textwidth]{figures/TC/new/gtx-crop.pdf}
-%     \end{tabular}
-%     \begin{tabular}{@{}c@{}}
-%         \includegraphics[scale=0.8, width=\textwidth]{figures/TC/new/tesla2-crop.pdf}
-%     \end{tabular}
-%     \caption{Plot showing the speedups achieved by predicted coarsening factors by various methods}
-%     % \vspace*{-\baselineskip}
-%     \label{fig:tcSpeedup}
-%      \vspace*{-0.4cm}
-% \end{figure}
 
 \begin{figure}
     \centering
@@ -138,6 +114,5 @@ We believe that this is because of the flow information associated with the obta
 Our model takes lesser time of $\approx$10 seconds for training when compared to $\approx$11 hours of training time needed by DeepTune-TL and $\approx$1 hour of training time needed (and 77K and 69K parameters used) by DeepTune and NCC approaches. 
 This results in $\approx 360\times$--$3960\times$ reduction of training time, and again, achieving good speedups. 
 
-
 \section{Conclusion}\label{sec:tc:conclusion}
-We are able to achieve better results with respect to the prior work in term of both accuracy. Additionaly, the training time of the model is far better then the others.
+We are able to achieve better results with respect to the prior work in term of both accuracy. Additionally, the training time of the model is far better then the others.

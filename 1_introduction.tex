@@ -1,18 +1,37 @@
 \chapter{Introduction}
 \label{chap:intro}
 
-        The multiple domains are using Machine Learning(ML) for achieving the task which was previously very hard, or the result was not that efficient. There are many types of machine learning algorithms for different kinds of functions.
 
-	    Every ML algorithms have it’s own usage and are divided into supervised learning, unsupervised learning, semi-supervised learning, and many more. The supervised learning problems are either classification or Regression. The classification is the task in which the model predicts the tag or label from the given labels for a given data point. Tagging the image and sentiment analysis are examples of the classification. In regression, the model predicts the value between an interval. Price of the house, Pollution growth-decline prediction are famous examples for regression.
+In the current days, Machine Learning (ML) is being used in many domains for achieving the tasks which were previously very hard, or the known algorithm(s) were either not efficient, or had poor success rate. 
+
+
+There are many types of Machine Learning (ML) algorithms with different kinds of capability and usage. 
+ML algorithms are broadly divided into categories like supervised learning, unsupervised learning, semi-supervised learning etc. Supervised learning problems are either classification or Regression. Classification is a task in which the model predicts the tag or label from the given labels for a given data point. Tagging the image and sentiment analysis are examples of the classification. 
+In regression, the model predicts the value between an interval. Price of the house, Pollution growth-decline prediction are famous examples for regression.
+
 	
-	    Deep learning is a type of machine learning in which we use a neural network as the function approximator. The neural networks are some kind of multi-layered perceptrons(MLP). Most of the current works are using Deep learning to achieve state of art. The ImageNet challenge in which major breakthroughs were presented by AlexNet~\cite{alexnet:NIPS_2012} in which they won it with a margin of 15%. Since then, a lot of work has been done.
+Most of the current success of ML is due to the success of DL.	
+Deep learning is a type of ML in which a neural network is used as a function approximator. Neural networks are a kind of multi-layered perceptrons (MLP).  The ImageNet challenge in which major breakthroughs were presented by AlexNet~\cite{alexnet:NIPS_2012} and they won it with a big margin compared to the previous state of the art.
 	
-	    Similarly, there are works that are done on program representations and code optimization. Some classic works like program tagging, summarization, vulnerability detection, and others. On the code optimization side, device mapping in which code generated in such a way so that it can run efficiently on either of it.
-	   
-	    We are working on LLVM~\cite{Lattner:2004:llvm} which is open-source compiler. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc and backends x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation on which many optimization can be applied as per the developer without much difficulty.
+Similarly, there are works that are done on program representations and code optimization. Some classic works like program tagging, summarization, vulnerability detection, and others. On the code optimization side, device mapping in which code generated in such a way so that it can run efficiently on either of it.
+
+We are working on LLVM~\cite{Lattner:2004:llvm} which is an open-source compiler. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc and backends like x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation on which many optimization can be applied as per the developer without much difficulty.
 	    
 	    We have worked on the program representation for LLVM IR. Here, we can generate the Instruction level, function level, and program level embedding. These embedding can be used in many software engineering and optimization tasks depending on the design. We have written a program classification model using TensorFlow\cite{tensorflow2015-whitepaper} and PyTorch\cite{pytorch} for the unseen algorithms. In the upcoming chapter, we will describe them in detail.	
     	
     	We have recreated the experimentation of Thread Coarsening Factor which IR2Vec\cite{IR2Vec} and able to have improved on the state-of-the-art results. It is a compiler optimization task that depends on machine architecture. 
     	
-    	In \textit{chapter \ref{chap:ch2}}, we will discuss about IR2Vec and it's application on Thread Coarsening task; in \textit{chapter \ref{chap:ch3}}, Performing Algorithm Recognition with IR2Vec in supervised and unsupervised manner; in \textit{chapter \ref{chap:ch4}}, We have done a case study on optimal-distribution using fusion and inline; \textit{chapter \ref{chap:ch5}}, Machine learning framework for register allocation and it last chapter~\ref{chap:conclude} we will conclude the work.
+The following is a brief overview of this thesis:
+
+\begin{itemize}
+    \item In \textit{Chapter \ref{chap:ch2}}, we will begin with discussing the background about program encodings and in particular about IR2Vec. Then, we will discuss about applying to Thread Coarsening task; 
+    
+    \item In \textit{Chapter \ref{chap:ch3}}, we will discuss about performing Algorithm Recognition with IR2Vec in both supervised and unsupervised setting; 
+    
+    \item In \textit{Chapter \ref{chap:ch4}}, we have done a case study on an approach to achieve optimal-distribution using fusion and inline
+    
+    \item In \textit{Chapter \ref{chap:ch5}}, we will discuss about Machine learning framework for Register Allocation
+    
+    \item  In \textit{Chapter~\ref{chap:conclude}}, we will conclude our work.
+
+\end{itemize}
