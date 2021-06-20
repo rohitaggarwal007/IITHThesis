@@ -1,25 +1,17 @@
 \chapter{A Machine Learning Framework for Register Allocation}
 \label{chap:ch5}
 
-In this chapter XXX XXX FIXME In section XXX
+In this chapter, we will talk about MLRA - \textit{A Machine Leaning Framework for Register Allocation}. Its main objectives are the following: to perform semantically correct code generation,  to support multiple backend architectures, 
+and to form proper communication between LLVM and ML model. 
 
-\ra{Starting}
+The main focus of this work will be on the \textit{infrastructure development}. 
+In section~\ref{sec:mlra:components}, we discuss about different components of the framework like Capture Interference graph, ML model interface and Code generation. 
+In Section~\ref{sec:mlra:arch}, we dsccuss about our Support for multiple architecture. 
+In Section~\ref{sec:mlra:correct}, we present the correctness results.
+In Section~\ref{sec:mlra:mlra_action}, we run the framework with an actual Model and report the (initial) results. 
+In Section~\ref{sec:mlra:conclusion}, we will conclude this chapter also outlining the future work.
 
-In the chapter, we will talk about MLRA - Machine Leaning Framework for Register Allocation. The main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be on infrastructure.
 
-\begin{itemize}
-    
-    \item In section \ref{sec:mlra:intro}, an introduction to Framework and its objectives
-    
-    \item In section \ref{sec:mlra:sup}, a brief overview supervised learning for Algorithm Recognition, dataset used, Model Architecture and results
-    
-    \item In section \ref{sec:mlra:unsup}, a brief overview unsupervised learning for Algorithm Recognition, dataset used, Model Architecture and results  
-    
-    \item  In section~\ref{sec:mlra:conclusion}, we will conclude this chapter.
-
-\end{itemize}
-
-\ra{ending}
 
 \section{Background}\label{sec:mlra:bg}
 Register Allocation is an old and classic optimization problem. Many researchers provided many solutions for it, some exact solutions, but many heuristics as well. The success of a heuristic  depends upon the domain expertise of its developer. There is always a possibility that some important heuristics are missed, leading to sub-optimal performance.
@@ -56,8 +48,6 @@ The current allocators are heuristically defined and provide sub-optimal solutio
 
 \section{Introduction}\label{sec:mlra:intro}
 We have developed a Machine learning framework for register allocation. It main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be the infrastructure.
-
-Here we discuss the orientation of this chapter. In section \ref{sec:mlra:components}, we have explained about different components of the framework like  Capture Interference graph, ML model interface and Code generation. In section\ref{sec:mlra:arch}, Support for multiple architecture. In section \ref{sec:mlra:correct}, the correction results are presented. In section \ref{sec:mlra:mlra_action}, run the framework with actual Model and pen done the results.
 
 \section{Previous Work}\label{sec:mlra:pre_work}
 \vk{More details before drawbacks}
@@ -164,8 +154,10 @@ Here we want to show how the framework can be used to register prediction using 
      \label{fig:mlra-fw}
 \end{figure}
 
-\subsection{Reinforcement Learning Model}
-Implemented a policy using the DQN algorithm in that the agent predicts which node should be assigned the register first.  While assigning the register, the policy is constraint by the interference rule. The objective of the model is to minimize the spillcost.
+\subsection{Reinforcement Learning (RL) Model}
+Reinforcement learning is the machine learning branch where datapoints do not have any label associated to them. During the training, a score is given to the model(agent) depending upon the intermediate and final action taken. The score is known as the reward which depend upon the action taken given an environment state. After applying action on the environment, its state or may not change. This change in the state would be good or bad. If the change is good, then a positive value is return as reward else negative value is returned as reward. The agent receive the reward from the environment and use this knowledge for future decision.
+
+We have implemented a policy using the DQN algorithm in that the agent predicts which node should be assigned the register first.  While assigning the register, the policy is constraint by the interference rule. The objective of the model is to minimize the spillcost.
 
 \subsection{Results}
 

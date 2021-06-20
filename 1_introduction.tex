@@ -10,28 +10,39 @@ ML algorithms are broadly divided into categories like supervised learning, unsu
 In regression, the model predicts the value between an interval. Price of the house, Pollution growth-decline prediction are famous examples for regression.
 
 	
-Most of the current success of ML is due to the success of DL.	
-Deep learning is a type of ML in which a neural network is used as a function approximator. Neural networks are a kind of multi-layered perceptrons (MLP).  The ImageNet challenge in which major breakthroughs were presented by AlexNet~\cite{alexnet:NIPS_2012} and they won it with a big margin compared to the previous state of the art.
+Most of the current success of ML is due to the success of Deep Learning. Deep learning (DL) is a type of ML in which a neural network is used as a function approximator. Neural networks are a kind of multi-layered perceptrons (MLP).  The major breakthrough was the AlexNet~\cite{alexnet:NIPS_2012} which came into prominence when they won the ImageNet challenge by presenting results that improved by a large margin the results compared to the previous state of the art.
 	
-Similarly, there are works that are done on program representations and code optimization. Some classic works like program tagging, summarization, vulnerability detection, and others. On the code optimization side, device mapping in which code generated in such a way so that it can run efficiently on either of it.
+\paragraph{DL, Program Representations and Applications:}
+Recently, there are several works that focus on program representations that are given as inputs for DL. The learnt inputs are used for several important  applications: like, program tagging, summarization, vulnerability detection, and others from the software engineering domain. Device mapping and thread coarsening are examples of two applications from the code-optimization domain.
 
-We are working on LLVM~\cite{Lattner:2004:llvm} which is an open-source compiler. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc and backends like x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation on which many optimization can be applied as per the developer without much difficulty.
+\paragraph{LLVM Compiler:}
+We are working on LLVM~\cite{Lattner:2004:llvm} which is an open-source compiler. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc and backends like x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation on which many optimizations can be easily implemented and applied without much difficulty.
 	    
-	    We have worked on the program representation for LLVM IR. Here, we can generate the Instruction level, function level, and program level embedding. These embedding can be used in many software engineering and optimization tasks depending on the design. We have written a program classification model using TensorFlow\cite{tensorflow2015-whitepaper} and PyTorch\cite{pytorch} for the unseen algorithms. In the upcoming chapter, we will describe them in detail.	
+\paragraph{Program Representations using LLVM}
+We have worked on the program representation for LLVM IR. We can generate the Instruction level, function level, and program level embedding. These embedding can be used in many software engineering and optimization tasks depending on the necessity.
+
+
     	
-    	We have recreated the experimentation of Thread Coarsening Factor which IR2Vec\cite{IR2Vec} and able to have improved on the state-of-the-art results. It is a compiler optimization task that depends on machine architecture. 
-    	
+
+
+\paragraph{Overview of this thesis:}
 The following is a brief overview of this thesis:
 
 \begin{itemize}
-    \item In \textit{Chapter \ref{chap:ch2}}, we will begin with discussing the background about program encodings and in particular about IR2Vec. Then, we will discuss about applying to Thread Coarsening task; 
+    \item In \textit{Chapter \ref{chap:ch2}}, we will begin with discussing the background about program encodings and in particular about IR2Vec encoding~\cite{IR2Vec}. 
+    Then, we will discuss about applying this encoding to Thread Coarsening task. The result of this application is prediction of Thread Coarsening Factor; our results improve from the other state-of-the-art works.
     
-    \item In \textit{Chapter \ref{chap:ch3}}, we will discuss about performing Algorithm Recognition with IR2Vec in both supervised and unsupervised setting; 
-    
+    \item In \textit{Chapter \ref{chap:ch3}}, we will discuss about performing Algorithm Recognition with IR2Vec in both supervised and unsupervised setting.
+    We have written a program classification model using TensorFlow~\cite{tensorflow_USENIX2016} and PyTorch~\cite{pytorch} for the unseen algorithms.	
+
     \item In \textit{Chapter \ref{chap:ch4}}, we have done a case study on an approach to achieve optimal-distribution using fusion and inline
     
-    \item In \textit{Chapter \ref{chap:ch5}}, we will discuss about Machine learning framework for Register Allocation
+    \item In \textit{Chapter \ref{chap:ch5}}, we will discuss about Machine learning framework for Register Allocation 
     
     \item  In \textit{Chapter~\ref{chap:conclude}}, we will conclude our work.
+    
+    \fixme{AAA AAA}
+    
+    
 
 \end{itemize}

@@ -22,6 +22,7 @@
 % in logo rendering via tikzpicture being ignored
 % what the heck dvips here doing anyway for pdftex?
 %\RequirePackage[dvips]{graphics}
+\RequirePackage{hyperref}
 \RequirePackage{array}
 \RequirePackage{tikz}
 \RequirePackage{ifxetex}
@@ -66,6 +67,10 @@
 \makededication
 \makeabstract
 \tableofcontents
+% \addcontentsline{toc}{section}{Declaration}
+% \addcontentsline{toc}{section}{Approval Sheet}
+% \addcontentsline{toc}{section}{Acknowledgements}
+% \addcontentsline{toc}{section}{Abstract}
 \addcontentsline{toc}{chapter}{Nomenclature} 
 \clearpage
 %\listoffigures

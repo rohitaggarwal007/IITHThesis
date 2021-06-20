@@ -1,21 +1,12 @@
 \chapter{Algorithm Recognition}
 \label{chap:ch3}
 
-In this chapter XXX XXX FIXME In section XXX
-\ra{Starting}
-In the chapter, we will discuss about Algorithm Recognition in supervised and unsupervised learning using IR2Vec.
-\begin{itemize}
-    
-    \item In section \ref{sec:algo:intro}, an introduction to Algorithm Recognition, previous work and our proposal
-    
-    \item In section \ref{sec:algo:sup}, a brief overview supervised learning for Algorithm Recognition, dataset used, Model Architecture and results
-    
-    \item In section \ref{sec:algo:unsup}, a brief overview unsupervised learning for Algorithm Recognition, dataset used, Model Architecture and results  
-    
-    \item  In section~\ref{sec:algo:conclusion}, we will conclude this chapter.
+In this chapter, we will discuss about Algorithm Recognition in supervised and unsupervised learning setting using IR2Vec. 
+In section~\ref{sec:algo:intro}, we give an brief introduction to Algorithm Recognition, aa summary of the previous work, and our proposal to solve the problem. 
+In section~\ref{sec:algo:sup}, we give a brief overview of supervised learning for Algorithm Recognition, the dataset used, our Model Architecture, and results. 
+In section~\ref{sec:algo:unsup}, we give a brief overview of unsupervised learning for Algorithm Recognition, few-shot learning, dataset used, our Model Architecture, and results. 
+In Section~\ref{sec:algo:conclusion}, we will conclude this chapter.
 
-\end{itemize}
-\ra{ending}
 
 \section{Introduction}\label{sec:algo:intro}
 Algorithm recognition is a problem in which we want to get the similar algorithm with similar semantics. In the programming language to prove that two programs are same or not is a undecidable problem and that cannot be solved deterministically. The benefits of algorithm recognition could be better maintenance of the codes, tagging the similar programs, code suggestion. etc.   A tool can be derive form this solution and can ease the problem faced by the software developer in the daily routine. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
@@ -25,7 +16,7 @@ Algorithm recognition is a problem in which we want to get the similar algorithm
 Applying deep learning to classify programs was first carried out by Peng et al.~\cite{Peng:2015}, and then used by various others~\cite{tbcnn-aaai16,ncc,Chen:2019} to demonstrate the goodness of their representation to classify programs. 
 However, most of these approaches~\cite{Peng:2015,tbcnn-aaai16,Chen:2019} are trained to solve the specific task of classifying programs (whose representations cannot generalize across other tasks).
 
-In this work, we have used the IR2Vec to get the program representations. We have applying this representation in supervised as well as unsupervised setting and discuss in upcoming sections about the work done respectively.
+In this work, we have used the IR2Vec to get the program representations. We wil apply these representations in supervised as well as unsupervised setting. In  upcoming sections, we will discuss in about the work done for each setting respectively.
 
 \section{Supervised Learning}\label{sec:algo:sup}
 Supervised Learning is the field of machine learning in which the model is trained against known label or tags. The model for a given data point can't predict any thing not mentioned in the vocabulary. There are some fixit numbers of label for a machine learning task.
@@ -47,7 +38,7 @@ On a similar note, we try to classify programs so as to recognize algorithms. He
 
 % we want to predict to give algorithm class the program belong to.
 
-We developed an classifier in TensorFlow\cite{tensorflow2015-whitepaper} which can classify the program respectively. 
+We developed an classifier in TensorFlow\cite{tensorflow_USENIX2016} which can classify the program respectively. 
 \subsection{DataSet}
 % We have selected the POJ-104 dataset\ref{tbcnn-aaai16} for our experiments. It has 104 type of different program which acts like class or label and each class has approximately ~500 programs. We have splitted this dataset into 3:1:1(training:testing:validation).
 
@@ -181,7 +172,7 @@ Unsupervised learning is the machine learning technique that is used to train th
 \end{figure}
 
 \subsection{Prototypical Networks}
-Prototypical Networks is a way for few-shot classification where it try to generalize the model to the unseen label at the time of training. They have proposed a loss function known as Prototypical Loss Sec~\ref{sec:algo:proto:loss} and use it train the network. They map the input embedding a new latent space where similar points are nearer. $S_{k}$ is the support set for class \textit{k}, $f_{\phi}$ is the neural network which map input to the latent space.
+Prototypical Networks~\cite{protonet:NIPS2017} is a way for few-shot classification where it try to generalize the model to the unseen label at the time of training. They have proposed a loss function known as Prototypical Loss Sec~\ref{sec:algo:proto:loss} and use it train the network. They map the input embedding a new latent space where similar points are nearer. $S_{k}$ is the support set for class \textit{k}, $f_{\phi}$ is the neural network which map input to the latent space.
 
 \subsubsection{Prototype}
 During the training phase when the support set is passed the model. Each class forms an aggregate point from other participating points and known as the prototype (Fig.~\ref{fig:unsupervised-prototypes}). In equation~\ref{eq:1}, prototype($c_{k}$) is been calculated for each class respectively. \vk{More here}
@@ -202,10 +193,10 @@ p_{ \phi }(y = k | x) =  \frac{exp(-d(f_{\phi}(x), c_{k}))}{\sum_{k^{'} }exp(-d(
 Inspring from the work mentioned above, we want to apply the same technique to the programs. We make the required changes to the Prototypical Networks~\cite{protonet:NIPS2017} to work for the programs presentations.  
 
 \subsection{Dataset}
-We have selected the POJ-104 dataset\cite{tbcnn-aaai16} for our experiments. It has 104 type of different program which acts like class or label and each class has approximately ~500 programs. We have split this dataset into Train: Test: Val →  1-80 classes (80): 81-94 classes (14): 95-104 classes (10).
+We have selected the POJ-104 dataset~\cite{tbcnn-aaai16} for our experiments. It has 104 type of different program which acts like class or label and each class has approximately ~500 programs. We have split this dataset into Train: Test: Val →  1-80 classes (80): 81-94 classes (14): 95-104 classes (10).
 
 \subsection{Model Architecture}
-The implementation was done using PyTorch in python. The first input layer expects a 300-dimension vector which is followed by a simple three-layered Multi-Level Perceptron(MLP) with a softmax layer for output. The Prototypical Loss Function~\ref{sec:algo:proto:loss} is used as the loss function and Adam optimizer. The whole training runs for 100 epochs.
+The implementation was done using PyTorch in python. The first input layer expects a 300-dimension vector which is followed by a simple three-layered Multi-Level Perceptron(MLP) with a softmax layer for output. The negative log-probability of the Eq.~~\ref{eq:2} is used as the loss function and Adam optimizer. The whole training runs for 100 epochs.
 
 \subsection{Results}
 We have calculate the accuracy for four configuration. The \textit{\textbf{N way}} is the number of the classes used in each task and \textit{\textbf{K shot}} is the number datapoint  of each class are being used. See the Tab.~\ref{tab:unsupervised-acc}.
@@ -225,6 +216,7 @@ Test Accuracy \% & 78.47 & 89.66 & 80.9 & 91.27 \\
 
 \vk{Conclusion}
 
-\ra{Starting}
+
 \section{Conclusion}\label{sec:algo:conclusion}
-\ra{ending}
+We successfully generates the vector presentation using IR2Vec for the POJ/OJ Dataset. Using this representation and the without any complex model architecture, we are able to get better results than the previous work for the supervised learning setting. On the other hand for unsupervised learning, we are  able to cluster the unseen classes which were not the part of the training dataset.
+This work would be extended to classify or identify the binaries files.
