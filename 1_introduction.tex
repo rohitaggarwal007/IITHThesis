@@ -5,21 +5,21 @@
 In the current days, Machine Learning (ML) is being used in many domains for achieving the tasks which were previously very hard, or the known algorithm(s) were either not efficient, or had poor success rate. 
 
 
-There are many types of Machine Learning (ML) algorithms with different kinds of capability and usage. 
-ML algorithms are broadly divided into categories like supervised learning, unsupervised learning, semi-supervised learning etc. Supervised learning problems are either classification or Regression. Classification is a task in which the model predicts the tag or label from the given labels for a given data point. Tagging the image and sentiment analysis are examples of the classification. 
+There are many types of ML algorithms with different kinds of capability and usage. 
+These are broadly divided into categories like supervised learning, unsupervised learning, semi-supervised learning etc. Supervised learning problems are either classification or Regression. Classification is a task in which the model predicts the tag or label from the given labels for a given data point. Tagging the image and sentiment analysis are examples of the classification. 
 In regression, the model predicts the value between an interval. Price of the house, Pollution growth-decline prediction are famous examples for regression.
 
 	
-Most of the current success of ML is due to the success of Deep Learning. Deep learning (DL) is a type of ML in which a neural network is used as a function approximator. Neural networks are a kind of multi-layered perceptrons (MLP).  The major breakthrough was the AlexNet~\cite{alexnet:NIPS_2012} which came into prominence when they won the ImageNet challenge by presenting results that improved by a large margin the results compared to the previous state of the art.
+Most of the current success of ML is due to the success of Deep Learning. Deep learning (DL) is a type of ML in which a neural network is used as a function approximator. Neural network is the network of neuron. A neuron is the basic unit of a neural network.\vk{Seems to be inaccurate}.  The major breakthrough was the AlexNet~\cite{alexnet:NIPS_2012} which came into prominence when they won the ImageNet challenge by presenting results that improved by a large margin the results compared to the previous state of the art.
 	
 \paragraph{DL, Program Representations and Applications:}
-Recently, there are several works that focus on program representations that are given as inputs for DL. The learnt inputs are used for several important  applications: like, program tagging, summarization, vulnerability detection, and others from the software engineering domain. Device mapping and thread coarsening are examples of two applications from the code-optimization domain.
+Recently, there are several works that focus on program representations that are given as inputs for DL. The learnt inputs are used for several important  applications: program tagging, summarization, vulnerability detection, and others from the software engineering domain. Device mapping and thread coarsening are examples of two applications from the code-optimization domain.
 
 \paragraph{LLVM Compiler:}
-We are working on LLVM~\cite{Lattner:2004:llvm} which is an open-source compiler. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc and backends like x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation on which many optimizations can be easily implemented and applied without much difficulty.
+LLVM~\cite{Lattner:2004:llvm} is a modern, open-source compiler tool-chain. It supports many frontend languages like C, C++, Haskel, Go, Swift, etc. and backends like x86, ARM, AMDGPU, NVIDIA, etc. It has very rich intermediate representation (IR) on which many optimizations can be easily implemented and applied without much difficulty.
 	    
 \paragraph{Program Representations using LLVM}
-We have worked on the program representation for LLVM IR. We can generate the Instruction level, function level, and program level embedding. These embedding can be used in many software engineering and optimization tasks depending on the necessity.
+We have worked on the program representation for LLVM IR. We can generate the Instruction level, function level, and program level embedding. These embeddings can be used in many software engineering and optimization tasks depending on the necessity.
 
 
     	
@@ -32,8 +32,8 @@ The following is a brief overview of this thesis:
     \item In \textit{Chapter \ref{chap:ch2}}, we will begin with discussing the background about program encodings and in particular about IR2Vec encoding~\cite{IR2Vec}. 
     Then, we will discuss about applying this encoding to Thread Coarsening task. The result of this application is prediction of Thread Coarsening Factor; our results improve from the other state-of-the-art works.
     
-    \item In \textit{Chapter \ref{chap:ch3}}, we will discuss about performing Algorithm Recognition with IR2Vec in both supervised and unsupervised setting.
-    We have written a program classification model using TensorFlow~\cite{tensorflow_USENIX2016} and PyTorch~\cite{pytorch} for the unseen algorithms.	
+    \item In \textit{Chapter \ref{chap:ch3}}, we will discuss about performing Algorithm Recognition with IR2Vec in both supervised and few-shot setting. \vk{not unsupervised}
+    We have written a program classification model using TensorFlow~\cite{tensorflow_USENIX2016} and PyTorch~\cite{pytorch} for the unseen classes of algorithms.	
 
     \item In \textit{Chapter \ref{chap:ch4}}, we have done a case study on an approach to achieve optimal-distribution using fusion and inline
     

@@ -1,14 +1,14 @@
 \chapter{Distribution And Fusion Case Study}
 \label{chap:ch4}
 
-In this chapter, we will discuss about a case study done on Frontier Pass which we have develop for our proposed Machine Learning based Loop Distribution. In section \ref{sec:distribution:bg}, background to Loop Distribution and it's benefits. In section \ref{sec:distribution:intro}, our proposed solution and it's components. In section \ref{sec:distribution:fp}, details of Frontier Pass which we have implemented. In section \ref{sec:distribution:ideo} and \ref{sec:distribution:case}, importance of  Frontier Pass and and results to substantiate it. In section~\ref{sec:distribution:conclusion}, we will conclude this chapter.
+In this chapter, we will discuss about a case study done on Frontier Pass which we have develop for our proposed Machine Learning (ML) based Loop Distribution. In section \ref{sec:distribution:bg}, background to Loop Distribution and it's benefits. In section \ref{sec:distribution:intro}, our proposed solution and it's components. In section \ref{sec:distribution:fp}, details of Frontier Pass which we have implemented. In section \ref{sec:distribution:ideo} and \ref{sec:distribution:case}, importance of  Frontier Pass and and results to substantiate it. In section~\ref{sec:distribution:conclusion}, we will conclude this chapter.
 
 
 \section{Background}\label{sec:distribution:bg}
     The optimization in the compiler is very important of code generation.
-Good is the optimization, better is the code execution. Here, we will talk about Loop Distribution optimization.
+Good optimization lead to faster execution of the program. Here, we will talk about Loop Distribution optimization.
 
-    In Loop Distribution, the bigger loop is split into smaller loops as shown in Fig.~\ref{fig:dist-introduction}. It may lead to improved loop vectorization and better locality. In LLVM, the loop distribution is not efficient, heuristic-based and does not promise the optimal distribution. It lead to miss in the vectorization opportunities.
+    In Loop Distribution, the bigger loop is split into smaller loops as shown in Fig.~\ref{fig:dist-introduction}. It may lead to improved loop vectorization and better locality. In LLVM~\cite{Lattner:2004:llvm}, the loop distribution is not efficient, heuristic-based and does not promise the optimal distribution. It lead to miss in the vectorization opportunities.
 
 \begin{figure}[t]
     \centering
@@ -18,7 +18,7 @@ Good is the optimization, better is the code execution. Here, we will talk about
 \end{figure}
 
 \section{Introduction}\label{sec:distribution:intro}
-We want to have a ML based Loop Distribution optimization in the LLVM. It could overcome the flaws of the existing Loop Distribution. But in this chapter, we will discuss about Frontier Pass and it's importance.
+We want to have a ML based Loop Distribution optimization in the LLVM's pipeline. It could overcome the flaws of the existing Loop Distribution. But in this chapter, we will discuss about Frontier Pass and it's importance.
 
 \begin{figure}[t]
     \centering

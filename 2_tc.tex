@@ -1,14 +1,14 @@
 \chapter{Applying IR2Vec to Thread Coarsening}
 \label{chap:ch2}
 
-In this chapter, we will discuss about the thread coarsening task for which the IR2Vec~\cite{IR2Vec} encoding is applied. In section~\ref{sec:tc:introir2vec}, we give a brief introduction of IR2Vec. In section~\ref{sec:tc:task}, we give an introduction to Thread Coarsening, the dataset that we use, our experimentation setup, and the results. 
+In this chapter, we will discuss about the thread coarsening task for which the IR2Vec~\cite{IR2Vec} encoding is applied. In section~\ref{sec:tc:introir2vec}, we give a brief introduction of IR2Vec. In section~\ref{sec:tc:task}, we give an introduction to Thread Coarsening, the dataset used, our experimentation setup, and the results. 
 In Section~\ref{sec:tc:conclusion}, we will conclude this chapter.
 
 
 \section{Introduction to IR2Vec}\label{sec:tc:introir2vec}
 % \subsection{Overview}
 % \vk{Should say what is IR2Vec here}
-IR2Vec~\cite{IR2Vec}, a Concise and Scalable encoding infrastructure to represent programs as a distributed embedding in continuous space. This distributed embedding is obtained by combining representation learning methods with flow information to capture the syntax as well as the semantics of the input programs. As our infrastructure is based on the Intermediate Representation (IR) of the source code, obtained embeddings are both language and machine independent. The entities of the IR are modeled as relationships, and their
+IR2Vec~\cite{IR2Vec} is a Concise and Scalable encoding infrastructure to represent programs as a distributed embedding in continuous space. This distributed embedding is obtained by combining representation learning methods with flow information to capture the syntax as well as the semantics of the input programs. As our infrastructure is based on the Intermediate Representation (IR) of the source code, obtained embeddings are both language and machine independent. The entities of the IR are modeled as relationships, and their
 representations are learned to form a seed embedding vocabulary. This infrastructure support two incremental encodings: Symbolic and Flow-Aware. Symbolic encodings are obtained from the seed embedding vocabulary, and Flow-Aware encodings are obtained by augmenting the Symbolic encodings with the flow information.
 
 The overview of IR2Vec methodology is shown in Fig.~\ref{fig:IR2Vec-Overview}. Instructions in IR can be represented as an Entity-Relationship Graph, with the instruction entities as nodes, and the relation between the entities as edges. A translational learning model is used to learn these relations. The output of this learning is a dictionary containing the embeddings of the entities and is called \textit{Seed embedding vocabulary}. 
@@ -37,7 +37,7 @@ These kernels are collectively taken from AMD SDK, NVIDIA SDK and Parboil benchm
 A datapoint consists of the kernel and its runtime corresponding to each thread coarsening factor on a particular GPU device.
 
 \subsection{Experimental Setup}
-Even for this task, we use gradient boosting classifier instead of LSTMs and RNNs to predict the coarsening factor for the four GPU targets. For this experiment, we set the learning rate as 0.05 with 140 decision stumps with 1 level, as the number of data points in the dataset is very low. We use ten-fold cross-validation for measuring the performance.
+We use gradient boosting classifier to predict the coarsening factor for the four GPU targets. For this experiment, we set the learning rate as 0.05 with 140 decision stumps with 1 level, as the number of data points in the dataset is very low. We use ten-fold cross-validation for measuring the performance.
 
 \begin{table}[h]
 \centering

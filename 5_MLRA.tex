@@ -5,8 +5,12 @@ In this chapter, we will talk about MLRA - \textit{A Machine Leaning Framework f
 and to form proper communication between LLVM and ML model. 
 
 The main focus of this work will be on the \textit{infrastructure development}. 
-In section~\ref{sec:mlra:components}, we discuss about different components of the framework like Capture Interference graph, ML model interface and Code generation. 
-In Section~\ref{sec:mlra:arch}, we dsccuss about our Support for multiple architecture. 
+
+In section~\ref{sec:mlra:bg}, we will have an overview of Register Allocation and graph coloring problem. In section~\ref{sec:mlra:intro} and ~\ref{sec:mlra:pre_work}, we will talk about our proposal and the previous work respectively. In section~\ref{sec:mlra:components}, we discuss about different components of the framework like Capture Interference graph, ML model interface and Code generation. 
+
+
+
+In Section~\ref{sec:mlra:arch}, we discuss about our Support for multiple architecture. 
 In Section~\ref{sec:mlra:correct}, we present the correctness results.
 In Section~\ref{sec:mlra:mlra_action}, we run the framework with an actual Model and report the (initial) results. 
 In Section~\ref{sec:mlra:conclusion}, we will conclude this chapter also outlining the future work.
@@ -16,9 +20,9 @@ In Section~\ref{sec:mlra:conclusion}, we will conclude this chapter also outlini
 \section{Background}\label{sec:mlra:bg}
 Register Allocation is an old and classic optimization problem. Many researchers provided many solutions for it, some exact solutions, but many heuristics as well. The success of a heuristic  depends upon the domain expertise of its developer. There is always a possibility that some important heuristics are missed, leading to sub-optimal performance.
 
-The allocation should be done efficiently as the number of the registers is limited in number and may lead to poor performance if the register does not give to a memory-bound variable. This leads to an increase in the use of the memory-based load and store operation and these are more expensive than the register operations. 
+The allocation should be done efficiently as the number of the registers is limited in number and may lead to poor performance if the registers are not assigned to a memory-bound variable properly. This leads to an increase in the use of the memory load and store operations. The memory operations are costlier than the register operations in case of performance. 
 
-The popular register allocations are greedy, basic, fast, and pbqp register allocation. In this we are interested in the register allocation via Interference graph coloring. In the fig~\ref{fig:mlra-coloring}, there is a sample code for which we have the live interval interference chart. The Live interval are the scope of the variable when the variable was first defined and last used. Every variable has it own live interval and those may interfere with others. We can formulate this problem as the graph color program where the node is the variable or live interval and edges are the inference among the nodes. The rule for the thumb, no two adjacent nodes be assigned the same color(register). The optimal graph coloring is a classic NP-Hard problem. 
+The popular register allocations are greedy, basic, fast, and pbqp register allocation. In this we are interested in the register allocation via Interference graph coloring. In the fig~\ref{fig:mlra-coloring}, there is a sample code for which we have the live interval interference chart. The Live interval are the scope of the variable when the variable was first defined and last used. Every variable has its own live interval and may interfere with other variable's live intervals. We can formulate this problem as the graph color program where the node is the variable or live interval and edges are the inference among the nodes. The Rule of Thumb, no two adjacent nodes be assigned the same color(register). The optimal graph coloring is a classic NP-Hard problem. 
 
 \begin{figure}[t]
     \centering
@@ -28,13 +32,14 @@ The popular register allocations are greedy, basic, fast, and pbqp register allo
 \end{figure}
 The LLVM has Greedy allocator  based on the graph coloring. There are four strategies used by this allocator respectively namely splitting, coalescing, eviction, and spilling (fig~\ref{fig:mlra-strat}). 
 
-\paragraph{Splitting} - In this a selected node or live of the graph is divided into two sub-live intervals depending upon the point of the splitting. The newly created live interval may or not form the edge between the existing nodes.
+\paragraph{Splitting} - A selected node or live interval of the graph is divided into two sub-live intervals depending upon the point of splitting. The newly created live interval may or not form the edge between the existing nodes.
 
-\paragraph{Coalescing} - In these two nodes which have the same variable value can be combined to form one node or live interval. 
-\paragraph{Eviction} - if some node of the graphs is already assigned a colored, but we wanted to uncolor the respective node. This process is known as eviction.
-\paragraph{Spilling} - If the allocator ran out of register or heuristically suggests assigning the variable to the memory. Memory load-store are costlier operations.
+\paragraph{Coalescing} - In these two nodes which share the same variable value can be combined to form one node or single live interval. 
 
-% \vk{fixme: image}
+\paragraph{Eviction} - If some node of the graphs is already assigned a colored, but we wanted to uncolor the respective node. This process is known as eviction.
+
+\paragraph{Spilling} - If the allocator ran out of register or heuristically suggests to assign the given variable to the memory. Memory load-store are costlier operations.
+
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4]{figures/chapter-5/mlra_strategies.png}
@@ -44,16 +49,18 @@ The LLVM has Greedy allocator  based on the graph coloring. There are four strat
 
 The \textit{greedy allocator} uses all the four strategies in a heuristic manner and \textit{Basic allocator} uses splitting and spilling.
 
-The current allocators are heuristically defined and provide sub-optimal solutions. Machine learning could help to better solutions.
+The current allocators are heuristically defined and provide sub-optimal solutions. Machine learning could help to improve the solutions.
 
 \section{Introduction}\label{sec:mlra:intro}
-We have developed a Machine learning framework for register allocation. It main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be the infrastructure.
+We have developed a Machine learning framework for register allocation. It's main objectives are to perform semantically correct code generation, support multiple backend architecture and form proper communication between LLVM and ML model. The main focus of the work will be the infrastructure.
 
 \section{Previous Work}\label{sec:mlra:pre_work}
 \vk{More details before drawbacks}
-In previous work~\cite{dlra:LLVMHPC_2020}, they tried to use the LSTM based deep learning model to predict the color or register to allocated. The graph as input to a model of max size 100 nodes and node has hidden representation as a bit vector of size 100. The bit index is set to one when the node interference with the respective node in the graph. 
 
-But there were several drawbacks to their work. The solution was not integrated back to the LLVM pipeline. The proper modeling of the interference rule was not done due to which predict adjacent nodes are assigned the same color and lead to incorrect register assignments. They have added a correction phase to overcome this problem. The dataset used for the training was not realistic as it was sampled from random graphs using the graph based C library.
+
+In previous work by Das et al.~\cite{dlra:LLVMHPC_2020}, they tried to use the LSTM based deep learning model to predict the color (or register) for each node of the interference graph. The graphs with atmost 100 nodes are being supported by this work. \fixme{NOT CLEAR CLEANUP PLEASE}
+
+There were several drawbacks to the above work. The solution was not integrated back to the LLVM pipeline. The proper modeling of the interference rule was not done. Because of this, the model could predict adjacent nodes to be assigned the same color, and this leads to incorrect register assignments. They have added a \textit{correction phase} to overcome this problem. Finally, the dataset used for the training was not realistic as it was sampled from random graphs using the graph based C library.
 
 \begin{figure}[t]
     \centering
@@ -65,9 +72,9 @@ But there were several drawbacks to their work. The solution was not integrated 
 \section{Framework Components}\label{sec:mlra:components}
 The communication between the Capture interference graph, ML model, and code generation is done via gRPC~\cite{grpc}. The gRPC is a medium for cross-platform communication between C++ (LLVM) and Python (ML Model). See Fig.\ref{fig:mlra-components}
 \subsection{Capture Interference Graph}
-We have written a pass in LLVM which is responsible for capturing the inference graphs for the given input files. We annotate the graph with more information which would be later used by the other components. Fig.~\ref{fig:mlra-cig}.
+We have written a pass in LLVM which is responsible for capturing the interference graphs for the given input files. We annotate the graph with more information which would be later used by the other components. Fig.~\ref{fig:mlra-cig}.
 
-The node comprises of Node label, information regarding type of register physical or virtual, Color and register Id if physical register, the class of the register, and embedding representation.
+The node comprises of node label, information regarding type of register physical or virtual, color and register Id if physical register, the class of the register, and embedding representation.
 
 \begin{figure}[t]
     \centering
@@ -76,11 +83,12 @@ The node comprises of Node label, information regarding type of register physica
      \label{fig:mlra-cig}
 \end{figure}
 
-The edge or interference that we are considering are between Virtual register and virtual register and between virtual register and virtual register. There are some physical register which are already in used and can’t be used and to respect the interference rule, the edge is added. The Virtual -- virtual is the base edge.
+The edge or interference that we are considering are between Virtual -- Physical registers and between Virtual -- Virtual registers. There are some physical register which are already in used and can’t be used to respect the interference rule, the edge is added. The Virtual -- Virtual is the trivial case.
 \subsection{ML Model interface}
+The Model interface could be any ML setting i.e. supervised, unsupervised, reinforcement and etc. The choice of the model depend upon the developer. The Model will be used in training as well as inference phase.
 
 \subsubsection{Training}
-From the previous component, we got the interference graphs and pass to the training paradigm. The interference graph goes to the model in th python where it request to start the server to the LLVM through the gRPC. After the server got started, the ML model run and share its prediction with the codegen through another gRPC call and codegen sends some information back to the model for further execution. See Fig.~\ref{fig:mlra-training}.
+From the previous Capture Interference graph component, we get the interference graphs and pass to the training paradigm. The interference graphs go to the model written in python where we request the LLVM to start the server through gRPC. After the server got started, the ML model runs and share its prediction with the CodeGen component through another gRPC call and receive some information as response. The response is used by model for it's proper execution. See Fig.~\ref{fig:mlra-training}.
 
 \begin{figure}[t]
     \centering
@@ -165,7 +173,7 @@ Run the inference with trained model and showed our results on PolyBench and MiB
 \subsubsection{PolyBench}
 It is a Loop benchmark which have different computational intensive programs and a standard benchmark suites for polyhedral optimization. See the Fig.~\ref{fig:mlra-polybench} and Tab.~\ref{tab:mlra:polybench} for the performance comparison
 
-\begin{figure}[t]
+\begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{figures/chapter-5/polybench.png}
     \caption{PolyBench - Runtime}
@@ -173,7 +181,7 @@ It is a Loop benchmark which have different computational intensive programs and
 \end{figure}
 
 
-\begin{table}[h]
+\begin{table}[h!]
 \begin{tabular}{|l|l|l|l|l|}
 \hline
  & \textbf{Greedy} & \textbf{Greedy ML} & \textbf{Basic} & \textbf{Basic ML} \\ \hline
@@ -187,14 +195,14 @@ GeoMean & \multicolumn{1}{r|}{9.306} & \multicolumn{1}{r|}{9.050} & \multicolumn
 \subsubsection{MiBench}
 This Benchmark is a micro-kernel benchmarks which are suitable for embedded devices.  See the Fig.~\ref{fig:mlra-mibench} and Tab.~\ref{tab:mlra:mibench} for the performance comparison
 
-\begin{figure}[t]
+\begin{figure}[h!]
     \centering
     \includegraphics[scale=0.4]{figures/chapter-5/MiBench.png}
     \caption{Runtime - MiBench}
      \label{fig:mlra-mibench}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[h!]
 \begin{tabular}{|l|l|l|l|l|}
 \hline
  & \textbf{Greedy} & \textbf{Greedy ML} & \textbf{Basic} & \textbf{Basic ML} \\ \hline
@@ -204,8 +212,6 @@ GeoMean & \multicolumn{1}{r|}{0.0227} & \multicolumn{1}{r|}{0.0220} & \multicolu
 \caption{MiBench - Runtime GeoMean}
 \label{tab:mlra:mibench}
 \end{table}
-
-% Conclusion Section
 
 \section{Conclusion}\label{sec:mlra:conclusion}
 We have successfully developed a framework for register allocation which generates semantically correct code, which supports multiple architectures, and which can communicate between LLVM (in C++) and ML model (in Python).

@@ -1,33 +1,33 @@
 \chapter{Algorithm Recognition}
 \label{chap:ch3}
-
-In this chapter, we will discuss about Algorithm Recognition in supervised and unsupervised learning setting using IR2Vec. 
-In section~\ref{sec:algo:intro}, we give an brief introduction to Algorithm Recognition, aa summary of the previous work, and our proposal to solve the problem. 
+\vk{fixme: unsupervised learning}
+In this chapter, we will discuss about Algorithm Recognition in supervised and \ra{few-short} setting using IR2Vec. 
+In section~\ref{sec:algo:intro}, we give a brief introduction to Algorithm Recognition, a summary of the previous work, and our proposal to solve the problem. 
 In section~\ref{sec:algo:sup}, we give a brief overview of supervised learning for Algorithm Recognition, the dataset used, our Model Architecture, and results. 
-In section~\ref{sec:algo:unsup}, we give a brief overview of unsupervised learning for Algorithm Recognition, few-shot learning, dataset used, our Model Architecture, and results. 
+In section~\ref{sec:algo:unsup}, we give a brief overview of few-shot learning for Algorithm Recognition, few-shot classification, dataset used, our Model Architecture, and results. 
 In Section~\ref{sec:algo:conclusion}, we will conclude this chapter.
 
 
 \section{Introduction}\label{sec:algo:intro}
-Algorithm recognition is a problem in which we want to get the similar algorithm with similar semantics. In the programming language to prove that two programs are same or not is a undecidable problem and that cannot be solved deterministically. The benefits of algorithm recognition could be better maintenance of the codes, tagging the similar programs, code suggestion. etc.   A tool can be derive form this solution and can ease the problem faced by the software developer in the daily routine. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
+Algorithm recognition is a problem in which we want to detect similar programs that solve the same problem. In the programming language to prove that two programs are same or not is an undecidable problem and cannot be solved deterministically. The benefits of algorithm recognition could be better maintenance of the codes, tagging the similar programs, code suggestion. etc.   A tool can be derived from this solution and can ease the problem faced by the software developer in the daily routine. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
 
 % Classifying programs based on the problem statement or detecting if two programs solve the same purpose is undecidable as there is no algorithm exist to emulate this on a Turing Machine. With that said, it cannot be solved on a modern computer. However, it is rather important -- classification of programs based on functionality helps in better maintainance of codes, helps in better code suggestion, etc. With the advent of machine learning based approximation strategies, several attempts have been made to fruitfully address this problem.
 
 Applying deep learning to classify programs was first carried out by Peng et al.~\cite{Peng:2015}, and then used by various others~\cite{tbcnn-aaai16,ncc,Chen:2019} to demonstrate the goodness of their representation to classify programs. 
 However, most of these approaches~\cite{Peng:2015,tbcnn-aaai16,Chen:2019} are trained to solve the specific task of classifying programs (whose representations cannot generalize across other tasks).
 
-In this work, we have used the IR2Vec to get the program representations. We wil apply these representations in supervised as well as unsupervised setting. In  upcoming sections, we will discuss in about the work done for each setting respectively.
+In this work, we have used the IR2Vec to get the program representations. We will apply these representations in supervised as well as \ra{few-shot} setting. In  upcoming sections, we will discuss in about the work done for each setting respectively.
 
 \section{Supervised Learning}\label{sec:algo:sup}
-Supervised Learning is the field of machine learning in which the model is trained against known label or tags. The model for a given data point can't predict any thing not mentioned in the vocabulary. There are some fixit numbers of label for a machine learning task.
+    Supervised Learning is the field of machine learning in which the model is trained against the set of known label or tags. The model for a given data point can't predict any thing that is not part of the set of classes that is exposed during training. There are some fixed numbers of label for a machine learning task.
 % \vk{Add more here..}
 
 % \subsection{Background}
-In case of the image classification, there is a image dataset and each image is labeled. We run the training using the given images as the input and predict the image label. Given the true value and predicted value, we calculate the loss which is used to update gradient.
+In case of the image classification, there is a dataset of images with the corresponding labels. A classifier would be trained on the images from training set to predict the label of the image. Given the true label and the predicted label, a loss is computed to update gradient.
 % \vk{Related work}
 
 % \subsection{Methodology}
-On a similar note, we try to classify programs so as to recognize algorithms. Here, given a program, the objective is to classify it to one of the known classes that it would belong. fig~\ref{fig:supervised-background}
+On a similar note, we try to classify programs so as to recognize algorithms. Here, given a program, the objective is to classify it to one of the known classes that it would belong. Fig~\ref{fig:supervised-background} summarizes this flow. 
 
 \begin{figure}[t]
     \centering
@@ -38,12 +38,12 @@ On a similar note, we try to classify programs so as to recognize algorithms. He
 
 % we want to predict to give algorithm class the program belong to.
 
-We developed an classifier in TensorFlow\cite{tensorflow_USENIX2016} which can classify the program respectively. 
+% We developed an classifier in TensorFlow\cite{tensorflow_USENIX2016} which can classify the program respectively. 
 \subsection{DataSet}
 % We have selected the POJ-104 dataset\ref{tbcnn-aaai16} for our experiments. It has 104 type of different program which acts like class or label and each class has approximately ~500 programs. We have splitted this dataset into 3:1:1(training:testing:validation).
 
 % ==================================================
-We make use of the POJ-104 dataset introduced in Mou et al.~\cite{tbcnn-aaai16} for program classification. This dataset is obtained from Pedagogical Programming Open Judge (POJ/OJ) system, where the students submit the solutions to programming questions and the Open Judge system automatically evaluates those codes. 
+We make use of the POJ-104 dataset introduced by Mou et al.~\cite{tbcnn-aaai16} for program classification. This dataset is obtained from Pedagogical Programming Open Judge (POJ/OJ) system, where the students submit the solutions to programming questions and the Open Judge system automatically evaluates those codes. 
 Each programming question has an associated ID and many valid submissions across each ID. 
 Each ID corresponding to a programming question forms a class, and all the submissions against the ID forms the data points of that class for classification problem. There are 104 such classes of C and C++ codes.
 
@@ -63,7 +63,7 @@ For this classification task, we construct a simple three layered neural network
 
 \subsection{Results}
 
-We achieve an accuracy of 96.2\% with \textit{Flow-Aware} encodings. 
+We achieve an accuracy of 96.2\% with \textit{Flow-Aware} encodings of IR2Vec. 
 The results are compared with various methods that had used the same dataset for classifying the programs. We outperform the state-of-the-art methods on using a simpler neural network, whereas other methods use RNNs and LSTMs to achieve the results.
 We obtain superior results by taking a very less training time of about \textit{one minute} per epoch when compared to the time taken by inst2vec of 1-2 hours per epoch on a P100 GPU, as claimed by the authors. 
 
@@ -89,7 +89,8 @@ As said earlier, the comparison is between TBCNN~\cite{tbcnn-aaai16}, inst2vec~\
 
 
 % \subsection{Visual Technique}
-As mentioned above have 300 dimension vector and it reduce it's dimension to 2 dimensions using t-SNE\cite{}. Points which are similar to each other meant to be near to each other. The effectiveness of the encoding different instance to time during training is shown.
+In Fig.~\ref{fig:clusters}, we visualize how the datapoints get clustered on training.
+As the input vector is of 300 dimensions, we reduce it's dimension to 2 dimensions using t-SNE~\cite{tsne}. Points which are similar to each other meant to be closer to each other. The effectiveness of the encoding different instance to time during training is shown in this figure.
 
 \begin{figure}[h]
     % \centering
@@ -131,30 +132,39 @@ As mentioned above have 300 dimension vector and it reduce it's dimension to 2 d
 \end{itemize}
 
 % Unsupervised Learning started
-
-\section{Unsupervised Learning}\label{sec:algo:unsup}
+\vk{We are not using unsupervised learning!}
+\section{Few Shot Learning}\label{sec:algo:unsup}
 \subsection{Background}
-Unsupervised learning is the machine learning technique that is used to train the model without labels. The clustering algorithm like KNN, K-means, hierarchical clustering, and others. 
-	Learning used to happen based upon minimizing the intra-cluster distance and maximizing the inter-cluster distances. Similar data points stay near a similar point and far from the non-similar ones. This can be used for the inference of the unseen classes.
-	
-	As the Fig~\ref{fig:unsupervised-background}, given the set of unlabelled program and pass them through a  machine learning model. The model will try to form clusters of similar programs during the training. After training is done, we perform inference on the model, it try to assign the program to the best-suited cluster. This is a schematic diagram of the flow for better understanding.
+We want to generalize the model for the unseen classes. The unseen classes are the data point types which were not present during the training. The unsupervised learning can't help to solve the problem as it would not generalize.
 
-	Few shot learning is a way of unsupervised learning in which while inference there is some data point in which the trained model adjusts the final prediction.
+Unsupervised learning is the type of machine learning technique, where the model is trained on the dataset that is unlabelled. The clustering algorithms (like KNN, K-means, hierarchical clustering) are the prominent examples of this category. 
+These algorithms focus on minimizing the intra-cluster distance and maximizing the inter-cluster distances. Similar data points stay near a similar point and far from the non-similar ones.
+
+As shown in Fig~\ref{fig:unsupervised-background}, the set of unlabelled programs are passed a  machine learning model. The model tries to form clusters of similar programs during the training. After training is done, we perform inference on the model, where we try to assign a given unseen program to the \textit{best-suited} cluster. At the time of inference, the unknown program is assigned to one of the existing cluster only.  
+% This is a schematic diagram of the flow for better understanding.
+
+\vk{Not correct?}
+\ra{We will use Few Shot Classification methodology to solve this problem. Few Shot Classification is the way to learn the patterns to create separate clusters, even for the unseen classes using the few shot methodology.} We will discuss in detail in Sec.~\ref{sec:algo:unsup:fsc}. 
+
+% Few shot learning is a way of learning where there is a limited availability of data. It can either be supervised or unsupervised. In this experiment, we use an unsupervised few shot learning technique for  
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.4]{figures/chapter-3/unsupervised.png}
-    \caption{Algorithm Recognition in Unsupervised Way}
+    \caption{Algorithm Recognition in Unsupervised Way\vk{Fixme}}
      \label{fig:unsupervised-background}
 \end{figure}
 
-\subsection{Few-Shot Learning}
-	    It is a type of unsupervised learning, in which the training phase has two sets i.e support set and a Query set. The training happens in task. Each task consist of N classes and K datapoint in the support set and N classes in the support set. Each task has a mutually exclusive set i.e. all the N classes are not part of another task.(fig~\ref{fig:unsupervised-fewshot})
+\subsection{Few Shot Classification}\label{sec:algo:unsup:fsc}
+\vk{Few shot learning is not unsupervised}
+	    In Few Shot Classification, model learn to generalize for unseen classes during training. The training phase has two sets - support set and a Query set. The training happens in task. Each task consists of N classes and K datapoints in the support set and N classes in the support set \vk{incorrect?}. Each task has a mutually exclusive set i.e. all the N classes are not part of another task.(fig~\ref{fig:unsupervised-fewshot})
 % 	Training
-
+\vk{Task -- not sure if it is a standard term}
     A task is given to the model and support set is passed to the model. Now to see how much the model learns after first task, we run it on the query set for which we knew the label. The datapoint belonging to same class should lie near to each other. In the example as per Fig.\ref{fig:unsupervised-background}, there is a cat class in the support set and query set of task1. On training, the datapoint of cat class from query set should try to lie near the cat cluster of the support set. The other datapoints in the query set should also have same behaviour.
 	
-	The Loss function is formulated in terms of the distance metric. If the query set is far apart during training then more is the loss and that needs to backpropagate for the better learning of the next task or batch.
+% 	The Loss function is formulated in terms of the distance metric\vk{Not necessarily; a notion of distance can be learnt}. If the query set is far apart during training then more is the loss and that needs to backpropagate for the better learning of the next task or batch.
+
+A previous work Prototypical Networks~\cite{protonet:NIPS2017} which perform few-short classification to generalize the model for unseen classes.
 
 \begin{figure}[t]
     \centering
@@ -172,10 +182,10 @@ Unsupervised learning is the machine learning technique that is used to train th
 \end{figure}
 
 \subsection{Prototypical Networks}
-Prototypical Networks~\cite{protonet:NIPS2017} is a way for few-shot classification where it try to generalize the model to the unseen label at the time of training. They have proposed a loss function known as Prototypical Loss Sec~\ref{sec:algo:proto:loss} and use it train the network. They map the input embedding a new latent space where similar points are nearer. $S_{k}$ is the support set for class \textit{k}, $f_{\phi}$ is the neural network which map input to the latent space.
+Prototypical Networks~\cite{protonet:NIPS2017} is a way for few-shot classification algorithm. They have proposed a loss function known as Prototypical Loss and use it to train the network. They map the input embedding to a new latent space where similar points are nearer. $S_{k}$ is the support set for class \textit{k}, where $f_{\phi}$ is the neural network which learns to map the input to latent space, where $\phi$ is the learnable parameter of the neural network.
 
 \subsubsection{Prototype}
-During the training phase when the support set is passed the model. Each class forms an aggregate point from other participating points and known as the prototype (Fig.~\ref{fig:unsupervised-prototypes}). In equation~\ref{eq:1}, prototype($c_{k}$) is been calculated for each class respectively. \vk{More here}
+During the training phase, the support set is passed to the model. Each class forms an aggregate point from other participating points and known as the prototype (Fig.~\ref{fig:unsupervised-prototypes}). In equation~\ref{eq:1}, prototype($c_{k}$) is been calculated for each class respectively. \vk{More here}
 
  
 \begin{equation} \label{eq:1}
@@ -183,14 +193,14 @@ c_{k} = \frac{1}{|S_{k}|}  \sum_{(x_{i},y_{i}) \epsilon S_{k}}  f_{ \phi }(x_{i}
 \end{equation}
 
 \subsubsection{Loss Function}\label{sec:algo:proto:loss}
-During the training phase, datapoint from form each class of the Query set to evaluated against the respective prototype. The loss function forms the probability distribution of a prototype($c_{k}$) given a point \textbf{x} . Using the square euclidean metric to calculate the distance between them. Less is the distance, higher  is the probability of the point x that it belongs to the respective prototype. Loss function is negative log-probability of $p_{\phi}$ from Eq.~\ref{eq:2} %\vk{Equation}
+During the training phase, datapoint from each class of the Query set to evaluated against all the calculated prototypes. The loss function is calculated using the probability distribution of a prototype($c_{k}$) given a point \textbf{x} . Using the square euclidean metric to calculate the distance between them. Less is the distance, higher is the probability that the point x belongs to the respective prototype. Loss function is negative log-probability of $p_{\phi}$ from Eq.~\ref{eq:2} %\vk{Equation}
 
 \begin{equation}\label{eq:2}
 p_{ \phi }(y = k | x) =  \frac{exp(-d(f_{\phi}(x), c_{k}))}{\sum_{k^{'} }exp(-d(f_{\phi}(x), c_{k^{'}}))} 
 \end{equation}
 
-\subsection{Program categorization for unseen programs}
-Inspring from the work mentioned above, we want to apply the same technique to the programs. We make the required changes to the Prototypical Networks~\cite{protonet:NIPS2017} to work for the programs presentations.  
+\subsection{Algorithm Recognition for unseen programs}
+Inspiring from the work mentioned above, we want to apply the same technique to the programs. We make the required changes to the Prototypical Networks~\cite{protonet:NIPS2017} to work for the programs recognition in few-shot setting.  
 
 \subsection{Dataset}
 We have selected the POJ-104 dataset~\cite{tbcnn-aaai16} for our experiments. It has 104 type of different program which acts like class or label and each class has approximately ~500 programs. We have split this dataset into Train: Test: Val →  1-80 classes (80): 81-94 classes (14): 95-104 classes (10).
@@ -214,9 +224,9 @@ Test Accuracy \% & 78.47 & 89.66 & 80.9 & 91.27 \\
 \label{tab:unsupervised-acc}
 \end{table}
 
-\vk{Conclusion}
+% \vk{Conclusion}
 
 
 \section{Conclusion}\label{sec:algo:conclusion}
-We successfully generates the vector presentation using IR2Vec for the POJ/OJ Dataset. Using this representation and the without any complex model architecture, we are able to get better results than the previous work for the supervised learning setting. On the other hand for unsupervised learning, we are  able to cluster the unseen classes which were not the part of the training dataset.
+We successfully generates the vector presentation using IR2Vec for the POJ/OJ Dataset. Using this representation and the without any complex model architecture, we are able to get better results than the previous work for the supervised learning setting. On the other hand for few-shot learning, we are  able to cluster the unseen classes which were not the part of the training dataset.
 This work would be extended to classify or identify the binaries files.
